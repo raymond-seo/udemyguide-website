@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-KW9HJM9T');</script>
+    <!-- End Google Tag Manager -->    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git & GitHub, 협업의 필수 도구 - Udemy Guide Notes</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+    <meta name="description" content="현대 소프트웨어 개발의 핵심인 버전 관리 시스템 Git과 GitHub의 기본 개념, 필수 명령어, 그리고 효율적인 협업 전략을 Udemy Guide Notes에서 자세히 알아봅니다.">
+    <meta name="keywords" content="Git, GitHub, 버전 관리, 협업 도구, 개발자 필수, 코드 관리, Pull Request, Branch, Merge">
+    <meta name="author" content="Udemy Guide Team">
+    <meta property="og:title" content="Git & GitHub, 협업의 필수 도구 - Udemy Guide Notes">
+    <meta property="og:description" content="버전 관리 시스템 Git과 GitHub를 활용한 효율적인 협업 방법에 대해 알아봅니다.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1647166545674-ce28ce93bdca?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+    <meta property="og:url" content="https://udemyguide.com/notes/git-github-guide"> <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Git & GitHub, 협업의 필수 도구 - Udemy Guide Notes">
+    <meta name="twitter:description" content="버전 관리 시스템 Git과 GitHub를 활용한 효율적인 협업 방법에 대해 알아봅니다.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1647166545674-ce28ce93bdca?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+    <link rel="canonical" href="https://udemyguide.com/notes/git-github-guide"> <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="notes-style.css"> 
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KW9HJM9T"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->    
+    <header>
+        <h1><a href="../" style="color:white;">Udemy Guide</a></h1> <nav>
+            <ul>
+                <li><a href="../#hero">홈</a></li>
+                <li><a href="../#roadmaps">직무별 로드맵</a></li>
+                <li><a href="#" style="color:var(--accent-color);">Notes</a></li> <li><a href="../#latest-courses">최신 추천 강의</a></li>
+                <li><a href="../#about">Udemy Guide 소개</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="note-post-detail">
+            <h1 class="post-title">Git & GitHub, 협업의 필수 도구</h1>
+            <p class="post-meta">작성일: 2025.04.02 | 카테고리: 개발 도구</p>
+            <img src="https://images.unsplash.com/photo-1647166545674-ce28ce93bdca?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Git GitHub 협업 도구 메인 이미지" class="post-main-image">
+
+            <div class="note-post-content">
+                <p>현대 소프트웨어 개발에서 혼자 모든 것을 만드는 경우는 드뭅니다. 대부분의 프로젝트는 여러 개발자가 함께 코드를 공유하고 수정하며 진행됩니다. 이때 필수적으로 사용되는 것이 바로 **버전 관리 시스템(Version Control System)**인 **Git**과 이를 기반으로 한 협업 플랫폼 **GitHub**입니다. <strong>Udemy Guide Notes</strong>에서 Git과 GitHub를 효과적으로 활용하는 방법을 알아보겠습니다.</p>
+
+                <h2>1. Git이란 무엇인가?</h2>
+                <p>Git은 분산 버전 관리 시스템(Distributed Version Control System, DVCS)입니다. 코드의 변경 이력을 효율적으로 기록하고 추적하며, 여러 개발자가 동시에 작업할 때 발생하는 충돌을 관리하고 병합(Merge)하는 기능을 제공합니다. Git이 없다면 수많은 코드 변경사항을 수동으로 관리해야 하는 지옥을 경험하게 될 것입니다.</p>
+                <ul>
+                    <li><strong>핵심 개념:</strong> Repository (저장소), Commit (커밋), Branch (브랜치), Merge (병합).</li>
+                    <li><strong>필수 명령어:</strong> <code>git init</code>, <code>git add</code>, <code>git commit</code>, <code>git branch</code>, <code>git checkout</code>, <code>git merge</code>.</li>
+                </ul>
+
+                <h2>2. GitHub란 무엇인가?</h2>
+                <p>GitHub는 Git 저장소를 호스팅하고 관리하는 웹 기반 플랫폼입니다. Git을 사용하는 개발자들이 코드를 공유하고, 함께 프로젝트를 관리하며, 오픈소스 프로젝트에 기여할 수 있도록 돕는 소셜 코딩 플랫폼입니다. Git이 로컬 컴퓨터에서 버전을 관리하는 도구라면, GitHub는 이를 원격으로 관리하고 협업 기능을 제공하는 서비스입니다.</p>
+                <ul>
+                    <li><strong>주요 기능:</strong> 원격 저장소 호스팅, Pull Request (PR), Issue Tracking, Project Management, Code Review.</li>
+                </ul>
+
+                <h2>3. Git & GitHub를 활용한 효율적인 협업 워크플로우</h2>
+
+                <h3>3.1. 브랜치 전략 (Branching Strategy)</h3>
+                <p>Git의 가장 강력한 기능 중 하나는 브랜치입니다. 각 기능 개발이나 버그 수정을 위한 별도의 브랜치를 생성하여 메인 코드(보통 `main` 또는 `master` 브랜치)에 영향을 주지 않고 안전하게 개발할 수 있습니다. 개발이 완료되면 메인 브랜치로 병합합니다.</p>
+                <ul>
+                    <li><strong>일반적인 전략:</strong> Git Flow, GitHub Flow, GitLab Flow.</li>
+                </ul>
+
+                <h3>3.2. 커밋 메시지 규칙</h3>
+                <p>커밋 메시지는 코드 변경의 이유와 내용을 설명하는 중요한 기록입니다. 간결하고 명확하게 작성하여 다른 개발자가 변경 이력을 쉽게 파악할 수 있도록 해야 합니다. (예: `feat: 로그인 기능 추가`, `fix: 버그 수정`, `docs: README 업데이트`)</p>
+
+                <h3>3.3. Pull Request (PR) 활용</h3>
+                <p>GitHub의 Pull Request는 코드 변경 사항을 메인 브랜치에 병합하기 전에 동료 개발자에게 코드 리뷰를 요청하는 과정입니다. 이는 코드 품질을 높이고, 잠재적인 버그를 발견하며, 지식을 공유하는 데 매우 효과적입니다.</p>
+
+                <h3>3.4. 코드 리뷰 참여</h3>
+                <p>자신의 코드에 대한 PR을 받는 것도 중요하지만, 동료의 코드 리뷰에 적극적으로 참여하는 것도 중요합니다. 이는 다른 사람의 코드를 통해 배우고, 팀 전체의 코드 품질을 향상시키는 좋은 기회입니다.</p>
+
+                <p>Git과 GitHub는 단순히 코드를 저장하는 것을 넘어, 팀의 생산성과 협업 문화를 좌우하는 핵심 도구입니다. 이 도구들을 능숙하게 다룬다면 여러분은 어떤 개발 환경에서도 빛나는 역량을 발휘할 수 있을 것입니다. <strong>Udemy Guide</strong>가 여러분의 협업 능력을 응원합니다!</p>
+                <p class="author-info">작성자: Udemy Guide Team</p>
+            </div>
+
+            <div class="related-content">
+                <h3>Git & GitHub 학습을 위한 Udemy 추천 강의</h3>
+                <div class="related-links">
+                    <a href="https://www.udemy.com/course/git-and-github-bootcamp/?ranMID=xxxx&ranEAID=xxxx&ranSiteID=xxxx" target="_blank">Git and GitHub Bootcamp (Git/GitHub 기초부터 심화까지)</a>
+                    <a href="https://www.udemy.com/course/the-complete-javascript-course/?ranMID=xxxx&ranEAID=xxxx&ranSiteID=xxxx" target="_blank">The Complete JavaScript Course 2025 (개발 과정에서 Git 활용)</a>
+                    <a href="https://www.udemy.com/course/master-the-coding-interview-data-structures-algorithms/?ranMID=xxxx&ranEAID=xxxx&ranSiteID=xxxx" target="_blank">Master the Coding Interview: Data Structures + Algorithms (문제 해결 능력과 협업)</a>
+                    <a href="https://www.udemy.com/course/the-web-developer-bootcamp-2021-korea/?ranMID=xxxx&ranEAID=xxxx&ranSiteID=xxxx" target="_blank">The Web Developer 부트캠프 2025 (실전 프로젝트에서 Git/GitHub 활용)</a>
+                </div>
+            </div>
+
+            <div class="back-to-list">
+                <a href="../#notes" class="button">← Notes 목록으로 돌아가기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Udemy Guide. All rights reserved.</p>
+    </footer>
+</body>
+</html>

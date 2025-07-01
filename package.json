@@ -1,0 +1,13 @@
+{
+  "name": "udemy-guide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "generate:sitemap": "node generate-sitemap.js", 
+    "build": "npm run generate:sitemap"        
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

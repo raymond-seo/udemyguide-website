@@ -1,0 +1,973 @@
+/* Google Fonts - Poppins & Noto Sans KR */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* --- 기본 설정 --- */
+:root {
+    --primary-color: #6C63FF; /* 연보라 계열 (강조 색상) */
+    --secondary-color: #8D8BEE; /* 약간 더 밝은 연보라 */
+    --accent-color: #00C4CC; /* 민트 계열 (포인트 색상) */
+    --text-color: #333;
+    --light-text-color: #666;
+    --background-light: #F7F8FC;
+    --background-dark: #2F3645;
+    --card-bg: #FFFFFF;
+    --border-color: #E0E0E0;
+    --shadow-light: rgba(0, 0, 0, 0.08);
+    --shadow-medium: rgba(0, 0, 0, 0.12);
+}
+
+body {
+    font-family: 'Poppins', 'Noto Sans KR', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: var(--background-light);
+    color: var(--text-color);
+    scroll-behavior: smooth; /* 부드러운 스크롤 */
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--secondary-color);
+}
+
+/* --- 헤더 --- */
+header {
+    background: var(--background-dark);
+    color: #fff;
+    padding: 0.8rem 20px; /* 상하 패딩을 줄여 높이 감소, 좌우 패딩 추가 */
+    /* text-align: center; 제거 - flexbox로 정렬 */
+    box-shadow: 0 4px 15px var(--shadow-medium);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    display: flex; /* flexbox 사용 */
+    justify-content: space-between; /* 양 끝 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    flex-wrap: wrap; /* 작은 화면에서 요소들이 줄바꿈되도록 */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem; /* 글자 크기 약간 줄여서 공간 확보 */
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: #fff;
+    /* text-align: left; 필요 없음, flexbox가 처리 */
+}
+
+nav {
+    margin-top: 0; /* h1과 nav가 flex item이 되므로 margin-top 제거 */
+}
+
+nav ul {
+    padding: 0;
+    list-style: none;
+    margin: 0; /* 기존 margin-top: 20px; 제거 */
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 끝으로 정렬 */
+    gap: 20px; /* 항목 간 간격 약간 줄임 */
+    flex-wrap: wrap; /* 작은 화면에서 항목들이 줄바꿈되도록 */
+}
+
+nav ul li a {
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem; /* 글자 크기 약간 줄임 */
+    padding: 6px 12px; /* 패딩을 줄여 링크 크기 감소 */
+    border-radius: 5px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+/* --- 반응형 디자인 수정 (768px 이하) --- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column; /* h1과 nav가 세로로 쌓이도록 변경 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+        padding: 0.8rem 15px; /* 작은 화면 패딩 조정 */
+    }
+
+    header h1 {
+        width: 100%; /* h1이 한 줄을 다 차지하도록 */
+        text-align: center; /* 중앙 정렬로 다시 변경 (필요시) */
+        margin-bottom: 10px; /* h1과 nav 사이 간격 */
+        font-size: 2rem; /* 글자 크기 다시 조정 */
+    }
+
+    nav {
+        width: 100%; /* nav도 한 줄 다 차지 */
+        margin-top: 10px; /* h1과 nav 사이 간격 */
+    }
+
+    nav ul {
+        flex-direction: column; /* 메뉴 항목 세로로 쌓이도록 */
+        gap: 10px; /* 항목 간 간격 */
+        align-items: center; /* 메뉴 항목 중앙 정렬 */
+    }
+
+    nav ul li a {
+        font-size: 0.95rem; /* 글자 크기 더 줄임 */
+        padding: 5px 10px; /* 패딩 더 줄임 */
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.6rem;
+    }
+    nav ul li a {
+        font-size: 0.9rem;
+    }
+}
+/* --- 메인 콘텐츠 영역 --- */
+main {
+    padding: 40px 30px;
+    max-width: 1400px;
+    margin: auto;
+}
+
+section {
+    background: var(--card-bg);
+    padding: 50px;
+    margin-bottom: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px var(--shadow-light);
+    transition: transform 0.3s ease;
+}
+
+section:hover {
+    transform: translateY(-5px);
+}
+
+section h2 {
+    font-size: 2.8rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    font-weight: 700;
+}
+
+section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 5px;
+    background: var(--accent-color);
+    border-radius: 3px;
+}
+
+/* --- 히어로 섹션 --- */
+#hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: #fff;
+    padding: 100px 30px;
+    text-align: center;
+    margin-bottom: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px var(--shadow-medium);
+}
+
+#hero h2 {
+    font-size: 4rem;
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+#hero h2::after {
+    background: #fff; /* 히어로 섹션 제목 밑줄은 흰색 */
+}
+
+#hero p {
+    font-size: 1.4rem;
+    max-width: 900px;
+    margin: 0 auto 40px auto;
+    line-height: 1.8;
+    color: #e6e6e6;
+}
+
+.button {
+    display: inline-block;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    border: none;
+    padding: 18px 45px;
+    cursor: pointer;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 196, 204, 0.4);
+}
+
+.button:hover {
+    background: #00A9B0;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 196, 204, 0.6);
+}
+
+/* --- 강의 목록 --- */
+.course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 35px;
+    margin-top: 35px;
+}
+
+.course-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px var(--shadow-light);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px var(--shadow-medium);
+}
+
+.course-card img {
+    max-width: 100%;
+    height: 200px; /* 이미지 높이 고정 */
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.course-card h3 {
+    font-size: 1.6rem;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    min-height: 60px; /* 제목이 짧아도 카드 높이 유지 */
+    font-weight: 600;
+}
+
+.course-card p {
+    font-size: 1rem;
+    color: var(--light-text-color);
+    margin-bottom: 12px;
+    flex-grow: 1;
+}
+
+.course-card strong {
+    color: var(--text-color);
+}
+
+.course-card .price {
+    font-weight: 700;
+    color: #FF6B6B; /* 부드러운 빨간색 (가격 강조) */
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.course-card .link {
+    display: block;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.3s ease;
+    margin-top: auto;
+}
+
+.course-card .link:hover {
+    background: #00A9B0;
+    transform: translateY(-2px);
+}
+
+/* --- 로드맵 카테고리 목록 --- */
+.roadmap-category-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+    margin-top: 35px;
+}
+
+.roadmap-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px var(--shadow-light);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    padding-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.roadmap-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px var(--shadow-medium);
+}
+
+.roadmap-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    filter: brightness(0.95); /* 이미지 살짝 어둡게 */
+}
+
+.roadmap-card h3 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin: 0 20px 15px 20px;
+    font-weight: 700;
+}
+
+.roadmap-card p {
+    font-size: 1rem;
+    color: var(--light-text-color);
+    padding: 0 20px;
+    margin-bottom: 15px;
+    flex-grow: 1;
+}
+
+/* --- 로드맵 상세 페이지 --- */
+#roadmap-detail {
+    background: var(--card-bg);
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px var(--shadow-light);
+    margin-top: 40px;
+}
+
+#roadmap-detail h3 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 700;
+}
+
+#roadmap-detail-description {
+    font-size: 1.15rem;
+    color: var(--light-text-color);
+    margin-bottom: 50px;
+    line-height: 1.8;
+    text-align: center;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.roadmap-section {
+    margin-bottom: 60px;
+    border-left: 6px solid var(--primary-color);
+    padding-left: 30px;
+    position: relative;
+    padding-bottom: 15px; /* 섹션 하단 여백 추가 */
+}
+
+.roadmap-section::before {
+    content: '🚀'; /* 로켓 이모지 아이콘 */
+    position: absolute;
+    left: -25px; /* 왼쪽 테두리에 겹치지 않게 */
+    top: -5px;
+    font-size: 2rem;
+    color: var(--accent-color);
+    background: var(--card-bg); /* 배경색과 동일하게 */
+    padding-right: 10px; /* 아이콘과 텍스트 간격 */
+}
+
+
+.roadmap-section h4 {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.roadmap-course-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 35px;
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--background-light);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px var(--shadow-light);
+}
+
+.roadmap-course-item:hover {
+    background: #eef2f9; /* 배경색 살짝 변화 */
+    box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.roadmap-course-item img {
+    width: 140px; /* 이미지 크기 고정 */
+    height: 80px; /* 이미지 크기 고정 */
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 25px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.roadmap-course-info {
+    flex-grow: 1;
+}
+
+.roadmap-course-info h5 {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.roadmap-course-info p {
+    font-size: 1rem;
+    color: var(--light-text-color);
+    margin-bottom: 10px;
+}
+
+.roadmap-course-info .skills {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.roadmap-course-info .skills span {
+    background: #EBF2FA; /* 스킬 태그 배경 */
+    color: var(--primary-color);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid var(--secondary-color);
+}
+
+.roadmap-course-item a {
+    display: inline-block;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    padding: 10px 22px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-top: 15px;
+    transition: background 0.3s ease, transform 0.3s ease;
+    font-weight: 600;
+}
+
+.roadmap-course-item a:hover {
+    background: #00A9B0;
+    transform: translateY(-2px);
+}
+
+#backToRoadmaps {
+    background: #A0A0A0; /* 부드러운 회색 */
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    transition: background 0.3s ease, transform 0.3s ease;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 500;
+}
+
+#backToRoadmaps:hover {
+    background: #888888;
+    transform: translateY(-3px);
+}
+
+/* --- About 섹션 --- */
+#about p {
+    font-size: 1.15rem;
+    text-align: center;
+    max-width: 900px;
+    margin: 25px auto;
+    line-height: 1.8;
+    color: var(--light-text-color);
+}
+
+/* --- 푸터 --- */
+footer {
+    text-align: center;
+    padding: 30px;
+    background: var(--background-dark);
+    color: #b0b8c0;
+    margin-top: 50px;
+    font-size: 0.95rem;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+}
+
+
+/* --- 반응형 디자인 --- */
+@media (max-width: 1024px) {
+    main {
+        padding: 30px 20px;
+    }
+
+    section {
+        padding: 40px;
+    }
+
+    #hero h2 {
+        font-size: 3.2rem;
+    }
+
+    .course-card img {
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.2rem;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    nav ul li a {
+        font-size: 1rem;
+        padding: 6px 12px;
+    }
+
+    main {
+        padding: 20px 15px;
+    }
+
+    section {
+        padding: 30px;
+    }
+
+    section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 25px;
+    }
+
+    #hero {
+        padding: 70px 20px;
+    }
+
+    #hero h2 {
+        font-size: 2.8rem;
+    }
+
+    #hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+    }
+
+    .button {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+
+    .course-list, .roadmap-category-list {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .course-card h3 {
+        font-size: 1.4rem;
+        min-height: auto;
+    }
+
+    .roadmap-card h3 {
+        font-size: 1.6rem;
+    }
+
+    #roadmap-detail {
+        padding: 30px;
+    }
+
+    #roadmap-detail h3 {
+        font-size: 2rem;
+    }
+
+    #roadmap-detail-description {
+        font-size: 1.05rem;
+        margin-bottom: 30px;
+    }
+
+    .roadmap-section {
+        padding-left: 20px;
+    }
+
+    .roadmap-section::before {
+        left: -18px;
+        font-size: 1.8rem;
+    }
+
+    .roadmap-section h4 {
+        font-size: 1.6rem;
+    }
+
+    .roadmap-course-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .roadmap-course-item img {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 100px;
+        height: 60px;
+    }
+
+    .roadmap-course-info h5 {
+        font-size: 1.2rem;
+    }
+
+    #backToRoadmaps {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    #about p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 1rem 0;
+    }
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    nav ul li {
+        margin: 8px 0;
+    }
+
+    main {
+        padding: 15px 10px;
+    }
+
+    section {
+        padding: 20px;
+    }
+
+    section h2 {
+        font-size: 1.8rem;
+    }
+
+    #hero {
+        padding: 50px 15px;
+    }
+
+    #hero h2 {
+        font-size: 2.2rem;
+    }
+
+    #hero p {
+        font-size: 1rem;
+    }
+
+    .button {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+
+    .course-card, .roadmap-card {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .course-card h3, .roadmap-card h3 {
+        font-size: 1.1rem;
+    }
+
+    #roadmap-detail {
+        padding: 20px;
+    }
+
+    #roadmap-detail h3 {
+        font-size: 1.6rem;
+    }
+
+    #roadmap-detail-description {
+        font-size: 0.95rem;
+    }
+
+    .roadmap-section h4 {
+        font-size: 1.4rem;
+    }
+
+    .roadmap-course-info h5 {
+        font-size: 1.1rem;
+    }
+
+    .roadmap-course-info p {
+        font-size: 0.9rem;
+    }
+
+    .roadmap-course-item a {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    #backToRoadmaps {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+}
+
+/* --- Notes 섹션 --- */
+#notes .section-description {
+    font-size: 1.15rem;
+    color: var(--light-text-color);
+    text-align: center;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 35px;
+    margin-top: 35px;
+}
+
+.note-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px var(--shadow-medium);
+}
+
+.note-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    border-radius: 10px 10px 0 0; /* 상단만 둥글게 */
+}
+
+.note-card-content {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-card h3 {
+    font-size: 1.6rem;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    min-height: 60px;
+    font-weight: 600;
+}
+
+.note-card p {
+    font-size: 1rem;
+    color: var(--light-text-color);
+    margin-bottom: 12px;
+    flex-grow: 1; /* 내용이 길어져도 카드 높이 일정하게 유지 */
+}
+
+.note-card .meta {
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.note-card .read-more {
+    display: inline-block;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.3s ease;
+    margin-top: auto; /* 하단 정렬 */
+}
+
+.note-card .read-more:hover {
+    background: #00A9B0;
+    transform: translateY(-2px);
+}
+
+/* --- 반응형 추가 --- */
+@media (max-width: 768px) {
+    #notes .section-description {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    .note-card img {
+        height: 160px;
+    }
+
+    .note-card h3 {
+        font-size: 1.4rem;
+        min-height: auto;
+    }
+
+    .note-card-content {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .note-card img {
+        height: 140px;
+    }
+
+    .note-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .note-card p {
+        font-size: 0.9rem;
+    }
+}
+
+/* notes-controls (카테고리 필터, 검색 등) */
+.notes-controls {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.category-filter {
+    display: flex;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-button {
+    background: #eef2f9; /* 배경색 */
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.filter-button:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.filter-button.active {
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+}
+
+/* "더 보기" 버튼 컨테이너 */
+.load-more-container {
+    text-align: center; /* 여전히 안전을 위해 유지합니다. */
+    margin-top: 40px;
+}
+
+/* 기존 .button 스타일을 따름 */
+.load-more-container .button {
+    /* 기존 스타일 그대로 유지 (padding, font-size, background, color, border 등) */
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 196, 204, 0.4);
+
+    /* --- 이 부분을 추가/수정하여 중앙 정렬을 강제합니다 --- */
+    display: block; /* 버튼을 블록 레벨 요소로 만듭니다. */
+    width: fit-content; /* 버튼의 너비를 내용에 맞게 조절합니다. */
+    margin: 0 auto; /* 상하 여백은 0, 좌우 여백은 자동으로 설정하여 중앙 정렬합니다. */
+}
+
+.load-more-container .button:hover {
+    background: #00A9B0;
+    transform: translateY(-5px); /* 이전 translateY(-2px)에서 -5px로 변경되어 더 눈에 띄게 했습니다. */
+    box-shadow: 0 8px 20px rgba(0, 196, 204, 0.6);
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .category-filter {
+        gap: 8px;
+    }
+    .filter-button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+}
+@media (max-width: 480px) {
+    .category-filter {
+        justify-content: flex-start; /* 모바일에서 왼쪽 정렬 */
+        overflow-x: auto; /* 가로 스크롤 가능하게 */
+        white-space: nowrap; /* 버튼들이 한 줄에 있도록 */
+        padding-bottom: 10px; /* 스크롤바 때문에 여백 */
+    }
+    .filter-button {
+        flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
+    }
+}
