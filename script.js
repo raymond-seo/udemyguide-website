@@ -510,24 +510,24 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "개발 팁",
             link: "notes/rest-api-best-practices"
         },
-        // {
-        //     id: 9,
-        //     title: "데이터 과학 로드맵 시작하기",
-        //     description: "데이터 과학 분야로 진입하기 위한 첫 걸음과 필수 학습 내용을 안내합니다.",
-        //     image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        //     date: "2025.05.01",
-        //     category: "커리어",
-        //     link: "notes/data-science-roadmap-start.html"
-        // },
-        // {
-        //     id: 10,
-        //     title: "생성형 AI 시대, 개발자의 역할 변화",
-        //     description: "생성형 AI가 발전하면서 개발자에게 요구되는 역할과 능력에 대해 탐구합니다.",
-        //     image: "https://images.unsplash.com/photo-1696001090001-a4b5735f4b59?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        //     date: "2025.05.15",
-        //     category: "AI",
-        //     link: "notes/developer-role-in-generative-ai.html"
-        // },
+        {
+            id: 9,
+            title: "데이터 과학 로드맵 시작하기",
+            description: "데이터 과학 분야로 진입하기 위한 첫 걸음과 필수 학습 내용을 안내합니다.",
+            image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            date: "2025.05.01",
+            category: "커리어",
+            link: "notes/data-science-roadmap-start"
+        },
+        {
+            id: 10,
+            title: "생성형 AI 시대, 개발자의 역할 변화",
+            description: "생성형 AI가 발전하면서 개발자에게 요구되는 역할과 능력에 대해 탐구합니다.",
+            image: "https://images.unsplash.com/photo-1712002641088-9d76f9080889?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            date: "2025.05.15",
+            category: "AI",
+            link: "notes/developer-role-in-generative-ai"
+        },
         //  {
         //     id: 11,
         //     title: "모던 웹 애니메이션 기술 총정리",
