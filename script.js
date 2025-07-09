@@ -501,15 +501,15 @@ document.addEventListener('DOMContentLoaded', () => {
             category: "개발 언어",
             link: "notes/why-nodejs"
         },
-        // {
-        //     id: 8,
-        //     title: "REST API 설계 베스트 프랙티스",
-        //     description: "효율적이고 일관된 REST API를 설계하기 위한 모범 사례들을 소개합니다.",
-        //     image: "https://images.unsplash.com/photo-1587440871875-c499f8d16792?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        //     date: "2025.04.25",
-        //     category: "개발 팁",
-        //     link: "notes/rest-api-best-practices.html"
-        // },
+        {
+            id: 8,
+            title: "REST API 설계 베스트 프랙티스",
+            description: "효율적이고 일관된 REST API를 설계하기 위한 모범 사례들을 소개합니다.",
+            image: "https://images.unsplash.com/photo-1634633111555-48907980b902?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            date: "2025.04.25",
+            category: "개발 팁",
+            link: "notes/rest-api-best-practices"
+        },
         // {
         //     id: 9,
         //     title: "데이터 과학 로드맵 시작하기",
