@@ -146,9 +146,9 @@ section {
     /* transition: transform 0.3s ease; */
 }
 
-section:hover {
+/* section:hover {
     /* transform: translateY(-5px); */
-}
+ */
 
 section h2 {
     font-size: 2.8rem;
