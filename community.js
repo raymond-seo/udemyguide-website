@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics"; // 애널리틱스를 사용하지 않으면 이 줄은 제거해도 됩니다.
 // ★★★ Cloud Firestore SDK 함수들을 가져옵니다 ★★★
 import { 
     getFirestore, 
@@ -13,12 +13,12 @@ import {
     query, 
     orderBy, 
     onSnapshot, 
-    serverTimestamp // 서버 타임스탬프를 사용하기 위해 임포트
+    serverTimestamp, // 서버 타임스탬프를 사용하기 위해 임포트
+    getDoc // 특정 문서(게시글/댓글)를 가져오기 위해 임포트
 } from "firebase/firestore";
 
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDBvmvQ1hUtO0E8umAPGlbAhe3rVdqu5lQ",
   authDomain: "mktdash-940f1.firebaseapp.com",
@@ -26,12 +26,12 @@ const firebaseConfig = {
   storageBucket: "mktdash-940f1.firebasestorage.app",
   messagingSenderId: "157652211467",
   appId: "1:157652211467:web:2d296b31255efbec15340e",
-  measurementId: "G-V992ECHF0V"
+  measurementId: "G-V992ECHF0V" // 애널리틱스를 사용하지 않으면 이 줄은 제거해도 됩니다.
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app); // 애널리틱스를 사용하지 않으면 이 줄은 제거해도 됩니다.
+const analytics = getAnalytics(app); // 애널리틱스를 사용하지 않으면 이 줄도 제거해도 됩니다.
 
 // ★★★ Firestore 서비스 인스턴스를 가져옵니다 ★★★
 const db = getFirestore(app);
@@ -88,7 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const courseTitleDisplay = post.udemyCourseName ? `<span class="course-title-display">(${post.udemyCourseName})</span>` : '';
 
             // Firestore timestamp는 toDate()로 변환 후 toLocaleString()
-            const displayDate = post.timestamp ? new Date(post.timestamp.toDate()).toLocaleString() : '날짜 없음';
+            // post.timestamp가 null일 수도 있으므로 확인 추가
+            const displayDate = post.timestamp && typeof post.timestamp.toDate === 'function' 
+                                ? new Date(post.timestamp.toDate()).toLocaleString() 
+                                : '날짜 없음';
 
             const courseInfoHtml = (post.udemyCourseUrl || post.udemyCourseSection)
                 ? `
@@ -116,16 +119,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="comments-section">
                         <h5>댓글</h5>
                         <div class="comments-list">
-                            ${(post.comments || []).map(comment => `
+                            ${(post.comments || []).map(comment => {
+                                const commentDisplayDate = comment.timestamp && typeof comment.timestamp.toDate === 'function' 
+                                                           ? new Date(comment.timestamp.toDate()).toLocaleString() 
+                                                           : '날짜 없음';
+                                return `
                                 <div class="comment-card">
-                                    <p class="meta">작성자: ${comment.nickname} | 날짜: ${new Date(comment.timestamp.toDate()).toLocaleString()}</p>
+                                    <p class="meta">작성자: ${comment.nickname} | 날짜: ${commentDisplayDate}</p>
                                     <p>${comment.content.replace(/\n/g, '<br>')}</p>
                                     <div class="comment-actions">
                                         <button class="edit-comment" data-comment-id="${comment.id}">수정</button>
                                         <button class="delete-comment delete" data-comment-id="${comment.id}">삭제</button>
                                     </div>
                                 </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                         <form class="comment-form">
                             <div class="form-group">
@@ -342,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (type === 'post') {
                 try {
                     const postRef = doc(db, 'posts', itemId);
-                    const postDoc = await getDoc(postRef); // getDoc 임포트 필요
+                    const postDoc = await getDoc(postRef); 
 
                     if (!postDoc.exists()) {
                         alert('게시글을 찾을 수 없습니다.');
@@ -354,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (postData.password === enteredPassword) {
                         if (action === 'edit') {
-                            editPost(itemId); // editPost 함수는 이미 prompt로 비밀번호 받지 않도록 수정했음
+                            editPost(itemId); 
                         } else if (action === 'delete') {
                             deletePost(itemId);
                         }
@@ -369,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const postRef = doc(db, 'posts', itemId);
                     const commentRef = doc(postRef, 'comments', commentId);
-                    const commentDoc = await getDoc(commentRef); // getDoc 임포트 필요
+                    const commentDoc = await getDoc(commentRef); 
 
                     if (!commentDoc.exists()) {
                         alert('댓글을 찾을 수 없습니다.');
@@ -405,11 +413,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 게시글 수정 함수
-    async function editPost(postId) { // async 추가
-        const post = posts.find(p => p.id === postId); // posts 배열은 onSnapshot으로 최신 상태 유지
-        if (!post) return;
+    async function editPost(postId) { 
+        // post는 onSnapshot을 통해 실시간으로 업데이트되는 posts 배열에서 찾습니다.
+        const post = posts.find(p => p.id === postId); 
+        if (!post) return; // 게시글이 posts 배열에 없으면 리턴
 
-        // 비밀번호는 showPasswordModal에서 이미 검증되었으므로 여기서는 다시 묻지 않습니다.
         const newTitle = prompt('새 제목을 입력하세요:', post.title);
         const newContent = prompt('새 내용을 입력하세요:', post.content);
         const newCourseName = prompt('새 Udemy 강의명 (선택 사항):', post.udemyCourseName || '');
@@ -417,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newCourseSection = prompt('새 강의 섹션/위치 (선택 사항):', post.udemyCourseSection || '');
         const newImage = prompt('새 이미지 URL을 입력하거나 비워두면 삭제됩니다 (현재: ' + (post.image || '없음') + '):', post.image || '');
 
-        if (newTitle !== null && newContent !== null) {
+        if (newTitle !== null && newContent !== null) { // prompt에서 취소 누르면 null 반환
             try {
                 await updateDoc(doc(db, 'posts', postId), {
                     title: newTitle,
@@ -431,14 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             } catch (error) {
                 console.error("Error updating document: ", error);
-                alert('게시글 수정에 실패했습니다.');
+                alert('게시글 수정에 실패했습니다. 관리자에게 문의하세요.');
             }
         }
     }
 
     // 게시글 삭제 함수
-    async function deletePost(postId) { // async 추가
-        // 비밀번호는 showPasswordModal에서 이미 검증되었으므로 여기서는 다시 묻지 않습니다.
+    async function deletePost(postId) { 
         if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
             try {
                 // 해당 게시글의 모든 서브컬렉션(댓글) 삭제
@@ -454,13 +461,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             } catch (error) {
                 console.error("Error deleting document: ", error);
-                alert('게시글 삭제에 실패했습니다.');
+                alert('게시글 삭제에 실패했습니다. 관리자에게 문의하세요.');
             }
         }
     }
 
     // 댓글 수정 함수
-    async function editComment(postId, commentId) { // async 추가
+    async function editComment(postId, commentId) { 
         const postRef = doc(db, 'posts', postId);
         const commentRef = doc(postRef, 'comments', commentId);
 
@@ -472,37 +479,58 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const commentData = commentDoc.data();
 
-            // 비밀번호는 showPasswordModal에서 이미 검증되었으므로 여기서는 다시 묻지 않습니다.
             const newContent = prompt('새 댓글 내용을 입력하세요:', commentData.content);
 
-            if (newContent !== null) {
+            if (newContent !== null) { // prompt에서 취소 누르면 null 반환
                 await updateDoc(commentRef, { content: newContent });
                 alert('댓글이 수정되었습니다.');
                 // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             }
         } catch (error) {
             console.error("Error updating comment: ", error);
-            alert('댓글 수정에 실패했습니다.');
+            alert('댓글 수정에 실패했습니다. 관리자에게 문의하세요.');
         }
     }
 
     // 댓글 삭제 함수
-    async function deleteComment(postId, commentId) { // async 추가
+    async function deleteComment(postId, commentId) { 
         if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
             const postRef = doc(db, 'posts', postId);
             const commentRef = doc(postRef, 'comments', commentId);
 
             try {
-                // 비밀번호는 showPasswordModal에서 이미 검증되었으므로 여기서는 다시 묻지 않습니다.
                 await deleteDoc(commentRef);
                 alert('댓글이 삭제되었습니다.');
                 // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             } catch (error) {
                 console.error("Error deleting comment: ", error);
-                alert('댓글 삭제에 실패했습니다.');
+                alert('댓글 삭제에 실패했습니다. 관리자에게 문의하세요.');
             }
         }
     }
+
+    // ★★★ Firestore 게시글 실시간 리스너 (DOM Content Loaded 시점부터 시작) ★★★
+    // 이 부분이 가장 중요합니다!
+    onSnapshot(query(collection(db, 'posts'), orderBy('timestamp', 'desc')), async (snapshot) => {
+        posts = []; // 기존 posts 배열 초기화
+        for (const doc of snapshot.docs) {
+            const postData = doc.data();
+            // 각 게시글의 댓글 서브컬렉션에서 댓글 가져오기 (비동기)
+            const commentsSnapshot = await getDocs(query(collection(doc.ref, 'comments'), orderBy('timestamp', 'asc')));
+            const comments = commentsSnapshot.docs.map(commentDoc => ({
+                id: commentDoc.id, // 댓글 문서 ID도 추가
+                ...commentDoc.data()
+            }));
+
+            posts.push({ id: doc.id, ...postData, comments: comments });
+        }
+        currentPage = 1; // 새로운 데이터가 로드되면 첫 페이지로 이동
+        renderPosts(); // 데이터가 업데이트될 때마다 게시글 다시 렌더링
+    }, error => {
+        console.error("Error fetching posts from Firestore: ", error);
+        alert("게시글을 불러오는 데 오류가 발생했습니다. 네트워크 연결을 확인하거나 관리자에게 문의하세요.");
+    });
+
 
     // ★★★ 이벤트 리스너 추가 (모달 열기/닫기) ★★★
     openPostFormButton.addEventListener('click', () => {
@@ -533,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 초기 로드: Firebase onSnapshot 리스너가 게시글을 불러와 renderPosts를 호출합니다.
-    // 따라서 이 renderPosts() 초기 호출은 필요 없습니다.
+    // 초기 로드 시 renderPosts()를 직접 호출할 필요 없습니다.
+    // Firebase onSnapshot 리스너가 데이터를 불러와 renderPosts를 호출합니다.
     // renderPosts(); 
 });
