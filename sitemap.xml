@@ -1,47 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<url>
-  <loc>https://udemyguide.com/</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/frontend-trends-2025</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/ai-developer-skills</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/clean-code-habits</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/why-typescript</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/prompt-engineering</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/git-github-guide</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
-<url>
-  <loc>https://udemyguide.com/notes/why-nodejs</loc>
-  <lastmod>2025-07-01T07:07:11+00:00</lastmod>
-</url>
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://udemyguide.com/</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/ai-developer-skills</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/clean-code-habits</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/data-science-roadmap-start</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/developer-role-in-generative-ai</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/frontend-trends-2025</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/git-github-guide</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/prompt-engineering</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/rest-api-best-practices</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/why-nodejs</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://udemyguide.com/notes/why-typescript</loc>
+        <lastmod>2025-07-11</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
 </urlset>
