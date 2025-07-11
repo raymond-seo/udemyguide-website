@@ -1,24 +1,23 @@
-// Import the functions you need from the SDKs you need
+// 필요한 Firebase SDK 함수들을 가져옵니다.
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics"; // 애널리틱스를 사용하지 않으면 이 줄은 제거해도 됩니다.
-// ★★★ Cloud Firestore SDK 함수들을 가져옵니다 ★★★
-import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    doc, 
-    updateDoc, 
-    deleteDoc, 
-    query, 
-    orderBy, 
-    onSnapshot, 
-    serverTimestamp, // 서버 타임스탬프를 사용하기 위해 임포트
-    getDoc // 특정 문서(게시글/댓글)를 가져오기 위해 임포트
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    getDoc, // 특정 문서(게시글/댓글)를 가져오기 위해 임포트
+    doc,
+    updateDoc,
+    deleteDoc,
+    query,
+    orderBy,
+    onSnapshot,
+    serverTimestamp // 서버 타임스탬프를 사용하기 위해 임포트
 } from "firebase/firestore";
 
 
-// Your web app's Firebase configuration
+// 여러분의 웹 앱 Firebase 설정 (Firebase 콘솔에서 가져온 정보)
 const firebaseConfig = {
   apiKey: "AIzaSyDBvmvQ1hUtO0E8umAPGlbAhe3rVdqu5lQ",
   authDomain: "mktdash-940f1.firebaseapp.com",
@@ -26,14 +25,14 @@ const firebaseConfig = {
   storageBucket: "mktdash-940f1.firebasestorage.app",
   messagingSenderId: "157652211467",
   appId: "1:157652211467:web:2d296b31255efbec15340e",
-  measurementId: "G-V992ECHF0V" // 애널리틱스를 사용하지 않으면 이 줄은 제거해도 됩니다.
+  measurementId: "G-V992ECHF0V" // 선택 사항, getAnalytics를 사용하지 않으면 이 줄도 제거
 };
 
-// Initialize Firebase
+// Firebase 앱 초기화
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app); // 애널리틱스를 사용하지 않으면 이 줄도 제거해도 됩니다.
+const analytics = getAnalytics(app); // 선택 사항, 사용하지 않으면 이 줄도 제거
 
-// ★★★ Firestore 서비스 인스턴스를 가져옵니다 ★★★
+// Firestore 서비스 인스턴스 가져오기
 const db = getFirestore(app);
 
 
@@ -42,57 +41,104 @@ document.addEventListener('DOMContentLoaded', () => {
     const postsContainer = document.getElementById('posts-container');
     const noPostsMessage = document.querySelector('.no-posts-message');
 
-    // 모달 관련 요소
+    // 모달 관련 DOM 요소들
     const postFormModal = document.getElementById('post-form-modal');
     const openPostFormButton = document.getElementById('open-post-form-button');
     const closeModalButton = postFormModal.querySelector('.close-button');
     const modalPasswordCheck = document.getElementById('password-check-modal');
 
-    // 페이지네이션 관련 요소
+    // 페이지네이션 관련 DOM 요소
     const paginationControls = document.getElementById('pagination-controls');
 
-    // ★★★ 추가: body 요소 참조 ★★★
+    // body 요소 참조 (스크롤 제어용)
     const body = document.body;
 
-    const postsPerPage = 10; // 한 화면에 표시할 게시글 수
+    const postsPerPage = 10; // 페이지당 게시글 수
     let currentPage = 1; // 현재 페이지 번호 (1부터 시작)
 
-    // posts 배열은 이제 Firestore onSnapshot 리스너에 의해 채워집니다.
-    let posts = []; 
+    // posts 배열은 Firestore onSnapshot 리스너에 의해 실시간으로 채워집니다.
+    let posts = [];
+
+    // ★★★ 게시글 작성/수정 모달 상태 관리 변수 ★★★
+    let isEditingPost = false; // 현재 모달이 게시글 수정 모드인지 여부
+    let currentEditingPostId = null; // 현재 수정 중인 게시글의 Firestore 문서 ID
+
+    // ★★★ 게시글 폼 모달 열기 및 초기화/내용 채우기 함수 ★★★
+    // post 객체가 전달되면 수정 모드, 없으면 새 글 작성 모드로 작동
+    function openPostFormModalForEdit(post = null) {
+        newPostForm.reset(); // 폼 필드 초기화
+        document.getElementById('post-password').value = ''; // 비밀번호 필드는 항상 비워둡니다.
+        
+        postImagePreview.src = '#'; // 이미지 미리보기 초기화
+        postImagePreview.style.display = 'none';
+        uploadedImageBase64 = null; // 업로드된 이미지 데이터 초기화 (File Reader에서 채워짐)
+
+        const modalTitleElement = postFormModal.querySelector('h3');
+        const submitButton = newPostForm.querySelector('button[type="submit"]');
+
+        if (post) { // 수정 모드 (post 객체가 전달된 경우)
+            isEditingPost = true;
+            currentEditingPostId = post.id; // 수정할 게시글의 ID 저장
+            modalTitleElement.textContent = '질문 수정하기';
+            submitButton.textContent = '수정 완료';
+
+            // 기존 게시글 데이터로 폼 필드 채우기
+            document.getElementById('post-nickname').value = post.nickname || '';
+            document.getElementById('post-title').value = post.title || '';
+            document.getElementById('post-content').value = post.content || '';
+            if (post.image) { // 기존 이미지가 있다면 미리보기 표시
+                postImagePreview.src = post.image;
+                postImagePreview.style.display = 'block';
+                uploadedImageBase64 = post.image; // 기존 이미지 데이터 유지
+            }
+            document.getElementById('udemy-course-name').value = post.udemyCourseName || '';
+            document.getElementById('udemy-course-url').value = post.udemyCourseUrl || '';
+            document.getElementById('udemy-course-section').value = post.udemyCourseSection || '';
+
+        } else { // 새 글 작성 모드 (post 객체가 없는 경우)
+            isEditingPost = false;
+            currentEditingPostId = null;
+            modalTitleElement.textContent = '새 질문 작성하기';
+            submitButton.textContent = '질문 등록';
+        }
+
+        body.style.overflow = 'hidden'; // 모달이 뜨면 배경 스크롤 잠금
+        postFormModal.style.display = 'flex'; // 모달 표시
+    }
 
     // 게시글 렌더링 함수
     function renderPosts() {
-        postsContainer.innerHTML = ''; // 기존 내용 모두 지우기
+        postsContainer.innerHTML = ''; // 기존 게시글 목록 비우기
         const startIndex = (currentPage - 1) * postsPerPage;
         const postsToRender = posts.slice(startIndex, startIndex + postsPerPage);
 
-        if (posts.length === 0) { // 전체 게시글이 없을 때
+        if (posts.length === 0) { // 게시글이 하나도 없을 때 메시지 표시
             noPostsMessage.style.display = 'block';
-            paginationControls.style.display = 'none'; // 페이지네이션 숨기기
+            paginationControls.style.display = 'none'; // 페이지네이션 숨김
             return;
         } else {
             noPostsMessage.style.display = 'none';
-            paginationControls.style.display = 'flex'; // 페이지네이션 보이기
+            paginationControls.style.display = 'flex'; // 페이지네이션 표시
         }
 
         postsToRender.forEach(post => {
             const postElement = document.createElement('div');
             postElement.classList.add('post-card');
-            postElement.dataset.id = post.id; // Firestore 문서 ID 사용
+            postElement.dataset.id = post.id; // Firestore 문서 ID를 data-id로 설정
 
-            // 이미지 포함 여부에 따라 내용 구성 (줄바꿈 처리 포함)
+            // 게시글 내용과 이미지 HTML 구성
             const postContentHtml = post.content.replace(/\n/g, '<br>') +
                                      (post.image ? `<img src="${post.image}" alt="${post.title} 이미지">` : '');
 
-            // 강의명만 별도로 상단에 표시
+            // 강의명 표시 (선택 사항)
             const courseTitleDisplay = post.udemyCourseName ? `<span class="course-title-display">(${post.udemyCourseName})</span>` : '';
 
-            // Firestore timestamp는 toDate()로 변환 후 toLocaleString()
-            // post.timestamp가 null일 수도 있으므로 확인 추가
-            const displayDate = post.timestamp && typeof post.timestamp.toDate === 'function' 
-                                ? new Date(post.timestamp.toDate()).toLocaleString() 
+            // Firestore 타임스탬프를 로컬 시간 문자열로 변환하여 표시
+            const displayDate = post.timestamp && typeof post.timestamp.toDate === 'function'
+                                ? new Date(post.timestamp.toDate()).toLocaleString()
                                 : '날짜 없음';
 
+            // 강의 정보 섹션 HTML 구성
             const courseInfoHtml = (post.udemyCourseUrl || post.udemyCourseSection)
                 ? `
                 <div class="course-info">
@@ -108,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="accordion-icon">➕️</span>
                 </div>
                 <p class="meta">작성자: ${post.nickname} | 날짜: ${displayDate}</p>
-                
+
                 <div class="post-card-content-wrapper">
                     <p class="content-body">${postContentHtml}</p>
                     ${courseInfoHtml}
@@ -120,8 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h5>댓글</h5>
                         <div class="comments-list">
                             ${(post.comments || []).map(comment => {
-                                const commentDisplayDate = comment.timestamp && typeof comment.timestamp.toDate === 'function' 
-                                                           ? new Date(comment.timestamp.toDate()).toLocaleString() 
+                                const commentDisplayDate = comment.timestamp && typeof comment.timestamp.toDate === 'function'
+                                                           ? new Date(comment.timestamp.toDate()).toLocaleString()
                                                            : '날짜 없음';
                                 return `
                                 <div class="comment-card">
@@ -155,16 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             postsContainer.appendChild(postElement);
 
-            // 아코디언 토글 이벤트
+            // 아코디언 토글 이벤트 리스너
             postElement.querySelector('.post-card-header').addEventListener('click', () => {
                 postElement.classList.toggle('active');
                 const contentWrapper = postElement.querySelector('.post-card-content-wrapper');
                 const icon = postElement.querySelector('.accordion-icon');
                 if (postElement.classList.contains('active')) {
-                    contentWrapper.style.maxHeight = contentWrapper.scrollHeight + "px"; // 실제 높이로 설정
+                    contentWrapper.style.maxHeight = contentWrapper.scrollHeight + "px"; // 실제 높이로 설정하여 펼침
                     icon.textContent = '➖️';
                 } else {
-                    contentWrapper.style.maxHeight = '0';
+                    contentWrapper.style.maxHeight = '0'; // 닫힘
                     icon.textContent = '➕️';
                 }
             });
@@ -173,40 +219,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const commentForm = postElement.querySelector('.comment-form');
             commentForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                // trim() 적용
+                // 폼 필드 값 가져오기 및 공백 제거
                 const nickname = commentForm.querySelector(`#comment-nickname-${post.id}`).value.trim();
                 const password = commentForm.querySelector(`#comment-password-${post.id}`).value.trim();
                 const content = commentForm.querySelector(`#comment-content-${post.id}`).value;
                 addComment(post.id, nickname, password, content, commentForm);
             });
 
-            // 게시글 수정/삭제 이벤트 리스너
+            // 게시글 수정/삭제 버튼 이벤트 리스너
             postElement.querySelector('.edit-post').addEventListener('click', (e) => {
-                e.stopPropagation(); // 아코디언 토글 방지
+                e.stopPropagation(); // 부모 요소의 아코디언 토글 방지
                 showPasswordModal(post.id, 'post', 'edit');
             });
             postElement.querySelector('.delete-post').addEventListener('click', (e) => {
-                e.stopPropagation(); // 아코디언 토글 방지
+                e.stopPropagation(); // 부모 요소의 아코디언 토글 방지
                 showPasswordModal(post.id, 'post', 'delete');
             });
 
-            // 댓글 수정/삭제 이벤트 리스너
+            // 댓글 수정/삭제 버튼 이벤트 리스너
             postElement.querySelectorAll('.edit-comment').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    e.stopPropagation(); // 아코디언 토글 방지
+                    e.stopPropagation(); // 부모 요소의 아코디언 토글 방지
                     const commentId = e.target.dataset.commentId;
                     showPasswordModal(post.id, 'comment', 'edit', commentId);
                 });
             });
             postElement.querySelectorAll('.delete-comment').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    e.stopPropagation(); // 아코디언 토글 방지
+                    e.stopPropagation(); // 부모 요소의 아코디언 토글 방지
                     const commentId = e.target.dataset.commentId;
                     showPasswordModal(post.id, 'comment', 'delete', commentId);
                 });
             });
         });
-        renderPaginationControls(); // 게시글 렌더링 후 페이지네이션 컨트롤 렌더링
+        renderPaginationControls(); // 게시글 렌더링 후 페이지네이션 컨트롤 업데이트
     }
 
     // 페이지네이션 컨트롤 렌더링 함수
@@ -221,14 +267,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paginationControls.style.display = 'flex';
 
-        // 이전 페이지 버튼
+        // '이전' 페이지 버튼
         const prevButton = document.createElement('button');
         prevButton.textContent = '◀';
         prevButton.disabled = currentPage === 1;
         prevButton.addEventListener('click', () => {
             currentPage--;
             renderPosts();
-            window.scrollTo({ top: postsContainer.offsetTop, behavior: 'smooth' });
+            window.scrollTo({ top: postsContainer.offsetTop, behavior: 'smooth' }); // 게시글 목록 상단으로 스크롤
         });
         paginationControls.appendChild(prevButton);
 
@@ -236,28 +282,28 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i;
-            pageButton.classList.toggle('active', i === currentPage);
+            pageButton.classList.toggle('active', i === currentPage); // 현재 페이지 활성화 표시
             pageButton.addEventListener('click', () => {
                 currentPage = i;
                 renderPosts();
-                window.scrollTo({ top: postsContainer.offsetTop, behavior: 'smooth' });
+                window.scrollTo({ top: postsContainer.offsetTop, behavior: 'smooth' }); // 게시글 목록 상단으로 스크롤
             });
             paginationControls.appendChild(pageButton);
         }
 
-        // 다음 페이지 버튼
+        // '다음' 페이지 버튼
         const nextButton = document.createElement('button');
         nextButton.textContent = '▶';
         nextButton.disabled = currentPage === totalPages;
         nextButton.addEventListener('click', () => {
             currentPage++;
             renderPosts();
-            window.scrollTo({ top: postsContainer.offsetTop, behavior: 'smooth' });
+            window.scrollTo({ top: postsContainer.offsetTop, behavior: 'smooth' }); // 게시글 목록 상단으로 스크롤
         });
         paginationControls.appendChild(nextButton);
     }
 
-    // 이미지 파일 리더 및 미리보기
+    // 이미지 파일 로드 및 미리보기 기능
     const postImageUpload = document.getElementById('post-image-upload');
     const postImagePreview = document.getElementById('post-image-preview');
     let uploadedImageBase64 = null;
@@ -279,80 +325,104 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 새 게시글 추가
-    newPostForm.addEventListener('submit', async (e) => { // async 추가
+    // 새 게시글 추가 또는 기존 게시글 수정 로직
+    newPostForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const newPost = {
+
+        const postData = {
             nickname: document.getElementById('post-nickname').value.trim(),
-            password: document.getElementById('post-password').value.trim(), // 실제 서비스 시 해싱 필수!
+            password: document.getElementById('post-password').value.trim(), // 실제 서비스 시에는 비밀번호 해싱 필수!
             title: document.getElementById('post-title').value,
             content: document.getElementById('post-content').value,
-            image: uploadedImageBase64,
+            image: uploadedImageBase64, // Base64 문자열 또는 이미지 URL을 가정
             udemyCourseName: document.getElementById('udemy-course-name').value,
             udemyCourseUrl: document.getElementById('udemy-course-url').value,
             udemyCourseSection: document.getElementById('udemy-course-section').value,
-            timestamp: serverTimestamp(), // Firestore 서버 타임스탬프
         };
 
-        try {
-            await addDoc(collection(db, 'posts'), newPost); // Firestore에 문서 추가
-            alert('질문이 성공적으로 등록되었습니다.');
-            newPostForm.reset();
-            postImagePreview.src = '#';
-            postImagePreview.style.display = 'none';
-            uploadedImageBase64 = null;
-            postFormModal.style.display = 'none';
-            body.style.overflow = ''; // 게시글 제출 후 모달 닫힐 때 body 스크롤 복원
-            // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
-        } catch (error) {
-            console.error("Error adding document: ", error);
-            alert('질문 등록에 실패했습니다. 관리자에게 문의하세요.');
+        if (isEditingPost) { // 수정 모드일 경우
+            try {
+                // (showPasswordModal에서 이미 비밀번호 검증되었지만, 폼 제출 시 다시 한번 확인하는 것이 안전)
+                const enteredPassword = document.getElementById('post-password').value.trim();
+                const originalPostRef = doc(db, 'posts', currentEditingPostId);
+                const originalPostDoc = await getDoc(originalPostRef);
+                const originalPostData = originalPostDoc.data();
+
+                if (originalPostData.password === enteredPassword) { // 비밀번호 일치 시
+                    await updateDoc(originalPostRef, postData); // Firestore 문서 업데이트
+                    alert('게시글이 성공적으로 수정되었습니다.');
+                } else {
+                    alert('비밀번호가 일치하지 않습니다. 수정에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error("게시글 업데이트 중 오류 발생: ", error);
+                alert('게시글 수정에 실패했습니다. 관리자에게 문의하세요.');
+            }
+        } else { // 새 글 작성 모드일 경우
+            postData.timestamp = serverTimestamp(); // 새 글에는 서버 타임스탬프 추가
+            try {
+                await addDoc(collection(db, 'posts'), postData); // Firestore에 새 문서 추가
+                alert('질문이 성공적으로 등록되었습니다.');
+            } catch (error) {
+                console.error("새 문서 추가 중 오류 발생: ", error);
+                alert('질문 등록에 실패했습니다. 관리자에게 문의하세요.');
+            }
         }
+
+        // 공통적으로 모달 닫기 및 폼 초기화
+        newPostForm.reset();
+        postImagePreview.src = '#';
+        postImagePreview.style.display = 'none';
+        uploadedImageBase64 = null;
+        postFormModal.style.display = 'none';
+        body.style.overflow = ''; // 배경 스크롤 복원
+        // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출할 필요 없음
     });
 
+
     // 댓글 추가 함수
-    async function addComment(postId, nickname, password, content, commentForm) { // async 추가 및 파라미터 변경
+    async function addComment(postId, nickname, password, content, commentForm) {
         const newComment = {
             nickname: nickname,
-            password: password, // 실제 서비스 시 해싱 필수!
+            password: password, // 실제 서비스 시에는 비밀번호 해싱 필수!
             content: content,
-            timestamp: serverTimestamp()
+            timestamp: serverTimestamp() // 서버 타임스탬프
         };
 
         try {
             await addDoc(collection(db, 'posts', postId, 'comments'), newComment); // 특정 게시글의 서브컬렉션에 댓글 추가
             alert('댓글이 성공적으로 등록되었습니다.');
-            commentForm.reset();
+            commentForm.reset(); // 댓글 폼 초기화
             // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
         } catch (error) {
-            console.error("Error adding comment: ", error);
+            console.error("댓글 추가 중 오류 발생: ", error);
             alert('댓글 등록에 실패했습니다. 관리자에게 문의하세요.');
         }
     }
 
-    // 비밀번호 확인 모달 표시 함수
+    // 비밀번호 확인 모달 표시 및 작업 처리 함수
     function showPasswordModal(itemId, type, action, commentId = null) {
-        modalPasswordCheck.style.display = 'flex';
-        body.style.overflow = 'hidden'; // 비밀번호 모달 열릴 때 body 스크롤 숨김
+        modalPasswordCheck.style.display = 'flex'; // 비밀번호 모달 표시
+        body.style.overflow = 'hidden'; // 배경 스크롤 잠금
 
         const modalPasswordInput = document.getElementById('modal-password');
         const modalConfirmButton = document.getElementById('modal-confirm');
         const modalCancelButton = document.getElementById('modal-cancel');
-        modalPasswordInput.value = '';
+        modalPasswordInput.value = ''; // 비밀번호 입력 필드 초기화
 
         // 기존 이벤트 리스너 중복 방지를 위해 초기화
         modalConfirmButton.onclick = null;
         modalCancelButton.onclick = null;
 
-        modalConfirmButton.onclick = async () => { // async 추가
-            const enteredPassword = modalPasswordInput.value.trim(); // .trim() 적용
+        modalConfirmButton.onclick = async () => {
+            const enteredPassword = modalPasswordInput.value.trim(); // 입력된 비밀번호 공백 제거
 
-            if (type === 'post') {
+            if (type === 'post') { // 게시글 작업 (수정/삭제)
                 try {
                     const postRef = doc(db, 'posts', itemId);
-                    const postDoc = await getDoc(postRef); 
+                    const postDoc = await getDoc(postRef); // Firestore에서 게시글 문서 가져오기
 
-                    if (!postDoc.exists()) {
+                    if (!postDoc.exists()) { // 게시글이 존재하지 않으면
                         alert('게시글을 찾을 수 없습니다.');
                         modalPasswordCheck.style.display = 'none';
                         body.style.overflow = '';
@@ -360,26 +430,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const postData = postDoc.data();
 
-                    if (postData.password === enteredPassword) {
+                    if (postData.password === enteredPassword) { // 비밀번호 일치
                         if (action === 'edit') {
-                            editPost(itemId); 
+                            modalPasswordCheck.style.display = 'none'; // 비밀번호 모달 닫기
+                            body.style.overflow = ''; // 배경 스크롤 복원
+                            // 게시글 수정 모드로 메인 작성 모달 열기 (기존 데이터 채움)
+                            openPostFormModalForEdit({ id: itemId, ...postData });
                         } else if (action === 'delete') {
-                            deletePost(itemId);
+                            modalPasswordCheck.style.display = 'none'; // 비밀번호 모달 닫기
+                            body.style.overflow = ''; // 배경 스크롤 복원
+                            deletePost(itemId); // 게시글 삭제 함수 호출
                         }
-                    } else {
+                    } else { // 비밀번호 불일치
                         alert('비밀번호가 일치하지 않습니다.');
+                        modalPasswordCheck.style.display = 'none'; // 모달 닫기
+                        body.style.overflow = '';
                     }
                 } catch (error) {
-                    console.error("Error fetching post for password check: ", error);
+                    console.error("게시글 비밀번호 확인 중 오류 발생: ", error);
                     alert('오류가 발생했습니다. 다시 시도해 주세요.');
+                    modalPasswordCheck.style.display = 'none';
+                    body.style.overflow = '';
                 }
-            } else if (type === 'comment') {
+            } else if (type === 'comment') { // 댓글 작업 (수정/삭제)
                 try {
                     const postRef = doc(db, 'posts', itemId);
                     const commentRef = doc(postRef, 'comments', commentId);
-                    const commentDoc = await getDoc(commentRef); 
+                    const commentDoc = await getDoc(commentRef); // Firestore에서 댓글 문서 가져오기
 
-                    if (!commentDoc.exists()) {
+                    if (!commentDoc.exists()) { // 댓글이 존재하지 않으면
                         alert('댓글을 찾을 수 없습니다.');
                         modalPasswordCheck.style.display = 'none';
                         body.style.overflow = '';
@@ -387,87 +466,68 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const commentData = commentDoc.data();
 
-                    if (commentData.password === enteredPassword) {
+                    if (commentData.password === enteredPassword) { // 비밀번호 일치
                         if (action === 'edit') {
+                            // 현재 댓글 수정은 prompt로 새 내용을 입력받음
+                            modalPasswordCheck.style.display = 'none';
+                            body.style.overflow = '';
                             editComment(itemId, commentId);
                         } else if (action === 'delete') {
-                            deleteComment(itemId, commentId);
+                            modalPasswordCheck.style.display = 'none';
+                            body.style.overflow = '';
+                            deleteComment(itemId, commentId); // 댓글 삭제 함수 호출
                         }
-                    } else {
+                    } else { // 비밀번호 불일치
                         alert('비밀번호가 일치하지 않습니다.');
+                        modalPasswordCheck.style.display = 'none';
+                        body.style.overflow = '';
                     }
                 } catch (error) {
-                    console.error("Error fetching comment for password check: ", error);
+                    console.error("댓글 비밀번호 확인 중 오류 발생: ", error);
                     alert('오류가 발생했습니다. 다시 시도해 주세요.');
+                    modalPasswordCheck.style.display = 'none';
+                    body.style.overflow = '';
                 }
             }
-            // 비밀번호 확인 로직 완료 후 모달 닫기 (비밀번호 일치 여부와 관계없이)
-            modalPasswordCheck.style.display = 'none';
-            body.style.overflow = ''; // 비밀번호 모달 닫힐 때 body 스크롤 복원
         };
 
+        // 비밀번호 모달 취소 버튼 클릭 시
         modalCancelButton.onclick = () => {
             modalPasswordCheck.style.display = 'none';
-            body.style.overflow = ''; // 비밀번호 모달 취소 시 body 스크롤 복원
+            body.style.overflow = ''; // 배경 스크롤 복원
         };
     }
 
-    // 게시글 수정 함수
-    async function editPost(postId) { 
-        // post는 onSnapshot을 통해 실시간으로 업데이트되는 posts 배열에서 찾습니다.
-        const post = posts.find(p => p.id === postId); 
-        if (!post) return; // 게시글이 posts 배열에 없으면 리턴
-
-        const newTitle = prompt('새 제목을 입력하세요:', post.title);
-        const newContent = prompt('새 내용을 입력하세요:', post.content);
-        const newCourseName = prompt('새 Udemy 강의명 (선택 사항):', post.udemyCourseName || '');
-        const newCourseUrl = prompt('새 Udemy 강의 URL (선택 사항):', post.udemyCourseUrl || '');
-        const newCourseSection = prompt('새 강의 섹션/위치 (선택 사항):', post.udemyCourseSection || '');
-        const newImage = prompt('새 이미지 URL을 입력하거나 비워두면 삭제됩니다 (현재: ' + (post.image || '없음') + '):', post.image || '');
-
-        if (newTitle !== null && newContent !== null) { // prompt에서 취소 누르면 null 반환
-            try {
-                await updateDoc(doc(db, 'posts', postId), {
-                    title: newTitle,
-                    content: newContent,
-                    udemyCourseName: newCourseName,
-                    udemyCourseUrl: newCourseUrl,
-                    udemyCourseSection: newCourseSection,
-                    image: newImage
-                });
-                alert('게시글이 수정되었습니다.');
-                // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
-            } catch (error) {
-                console.error("Error updating document: ", error);
-                alert('게시글 수정에 실패했습니다. 관리자에게 문의하세요.');
-            }
-        }
+    // 게시글 수정 함수 (이제 showPasswordModal에서 openPostFormModalForEdit를 직접 호출하므로,
+    // 이 함수는 게시글 수정 로직을 실제로 처리하지는 않고, 주로 디버깅/참고용으로 남겨둡니다.)
+    async function editPost(postId) {
+        console.log(`게시글 ${postId} 수정 로직 시작 (UI는 모달로 위임).`);
+        // 실제 수정 UI는 openPostFormModalForEdit({ id: postId, ...postData }) 호출을 통해 이루어집니다.
     }
 
     // 게시글 삭제 함수
-    async function deletePost(postId) { 
+    async function deletePost(postId) {
         if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
             try {
-                // 해당 게시글의 모든 서브컬렉션(댓글) 삭제
+                // 해당 게시글의 모든 서브컬렉션(댓글)을 먼저 삭제해야 합니다.
+                // Firestore는 서브컬렉션을 자동으로 삭제하지 않습니다.
                 const commentsRef = collection(db, 'posts', postId, 'comments');
                 const commentsSnapshot = await getDocs(commentsRef);
-                // Firestore는 서브컬렉션을 자동으로 삭제하지 않으므로, 모든 댓글을 수동으로 삭제
                 for (const commentDoc of commentsSnapshot.docs) {
                     await deleteDoc(doc(db, 'posts', postId, 'comments', commentDoc.id));
                 }
 
                 await deleteDoc(doc(db, 'posts', postId)); // 게시글 문서 삭제
                 alert('게시글이 삭제되었습니다.');
-                // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             } catch (error) {
-                console.error("Error deleting document: ", error);
+                console.error("게시글 삭제 중 오류 발생: ", error);
                 alert('게시글 삭제에 실패했습니다. 관리자에게 문의하세요.');
             }
         }
     }
 
-    // 댓글 수정 함수
-    async function editComment(postId, commentId) { 
+    // 댓글 수정 함수 (현재는 prompt를 사용하여 새 내용을 입력받습니다.)
+    async function editComment(postId, commentId) {
         const postRef = doc(db, 'posts', postId);
         const commentRef = doc(postRef, 'comments', commentId);
 
@@ -481,87 +541,98 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const newContent = prompt('새 댓글 내용을 입력하세요:', commentData.content);
 
-            if (newContent !== null) { // prompt에서 취소 누르면 null 반환
+            if (newContent !== null) { // 사용자가 prompt에서 '취소'를 누르지 않았다면
                 await updateDoc(commentRef, { content: newContent });
                 alert('댓글이 수정되었습니다.');
-                // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             }
         } catch (error) {
-            console.error("Error updating comment: ", error);
+            console.error("댓글 수정 중 오류 발생: ", error);
             alert('댓글 수정에 실패했습니다. 관리자에게 문의하세요.');
         }
     }
 
     // 댓글 삭제 함수
-    async function deleteComment(postId, commentId) { 
+    async function deleteComment(postId, commentId) {
         if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
             const postRef = doc(db, 'posts', postId);
             const commentRef = doc(postRef, 'comments', commentId);
 
             try {
-                await deleteDoc(commentRef);
+                await deleteDoc(commentRef); // 댓글 문서 삭제
                 alert('댓글이 삭제되었습니다.');
-                // onSnapshot 리스너가 자동 업데이트하므로 renderPosts() 직접 호출 필요 없음
             } catch (error) {
-                console.error("Error deleting comment: ", error);
+                console.error("댓글 삭제 중 오류 발생: ", error);
                 alert('댓글 삭제에 실패했습니다. 관리자에게 문의하세요.');
             }
         }
     }
 
     // ★★★ Firestore 게시글 실시간 리스너 (DOM Content Loaded 시점부터 시작) ★★★
-    // 이 부분이 가장 중요합니다!
+    // 이 리스너가 Firebase 데이터 변경을 감지하고 posts 배열을 업데이트하며 renderPosts()를 호출하여 UI를 갱신합니다.
     onSnapshot(query(collection(db, 'posts'), orderBy('timestamp', 'desc')), async (snapshot) => {
         posts = []; // 기존 posts 배열 초기화
-        for (const doc of snapshot.docs) {
-            const postData = doc.data();
-            // 각 게시글의 댓글 서브컬렉션에서 댓글 가져오기 (비동기)
-            const commentsSnapshot = await getDocs(query(collection(doc.ref, 'comments'), orderBy('timestamp', 'asc')));
-            const comments = commentsSnapshot.docs.map(commentDoc => ({
-                id: commentDoc.id, // 댓글 문서 ID도 추가
-                ...commentDoc.data()
-            }));
+        const fetchCommentsPromises = []; // 각 게시글의 댓글을 비동기로 가져올 Promise들을 저장할 배열
 
-            posts.push({ id: doc.id, ...postData, comments: comments });
+        for (const postDoc of snapshot.docs) { // 각 게시글 문서에 대해 반복
+            const postData = postDoc.data();
+            const postId = postDoc.id;
+
+            // 각 게시글에 대한 댓글 서브컬렉션에서 댓글을 가져오는 Promise 생성
+            const commentsPromise = getDocs(query(collection(postDoc.ref, 'comments'), orderBy('timestamp', 'asc')))
+                .then(commentsSnapshot => {
+                    return commentsSnapshot.docs.map(commentDoc => ({
+                        id: commentDoc.id, // 댓글 문서의 ID도 포함
+                        ...commentDoc.data()
+                    }));
+                })
+                .catch(error => {
+                    console.error(`게시글 ${postId}의 댓글을 가져오는 중 오류 발생: `, error);
+                    return []; // 오류 발생 시 빈 배열 반환하여 Promise.all을 방해하지 않음
+                });
+
+            fetchCommentsPromises.push(commentsPromise); // Promise 배열에 추가
+            // posts 배열에 게시글 데이터만 먼저 추가하고, comments는 임시로 빈 배열로 둡니다.
+            // 모든 commentsPromise가 완료된 후 comments 배열이 채워질 것입니다.
+            posts.push({ id: postId, ...postData, comments: [] });
         }
-        currentPage = 1; // 새로운 데이터가 로드되면 첫 페이지로 이동
-        renderPosts(); // 데이터가 업데이트될 때마다 게시글 다시 렌더링
+
+        // 모든 댓글 가져오기 Promise들이 완료될 때까지 기다림 (비동기 병렬 처리)
+        const allComments = await Promise.all(fetchCommentsPromises);
+
+        // posts 배열에 각 게시글에 해당하는 댓글 데이터 채워넣기
+        allComments.forEach((comments, index) => {
+            posts[index].comments = comments;
+        });
+
+        currentPage = 1; // 새로운 데이터가 로드되면 페이지네이션을 위해 현재 페이지를 첫 페이지로 재설정
+        renderPosts(); // 데이터가 업데이트되면 게시글 목록 다시 렌더링
     }, error => {
-        console.error("Error fetching posts from Firestore: ", error);
+        console.error("Firestore에서 게시글을 가져오는 중 오류 발생: ", error);
         alert("게시글을 불러오는 데 오류가 발생했습니다. 네트워크 연결을 확인하거나 관리자에게 문의하세요.");
     });
 
 
-    // ★★★ 이벤트 리스너 추가 (모달 열기/닫기) ★★★
+    // ★★★ 이벤트 리스너들 ★★★
+
+    // '새 질문 작성하기' 버튼 클릭 시
     openPostFormButton.addEventListener('click', () => {
-        body.style.overflow = 'hidden'; // 모달 열릴 때 body 스크롤 숨김
-        
-        // setTimeout은 더 이상 필요하지 않을 수 있습니다.
-        // 현재는 요청에 따라 유지하되, 필요 없으면 삭제해도 됩니다.
-        setTimeout(() => {
-            postFormModal.style.display = 'flex'; 
-        }, 50); 
-        
-        newPostForm.reset();
-        postImagePreview.src = '#';
-        postImagePreview.style.display = 'none';
-        uploadedImageBase64 = null;
+        openPostFormModalForEdit(); // 새 글 작성 모드로 모달 열기
     });
 
+    // 모달 닫기 버튼 (X 버튼) 클릭 시
     closeModalButton.addEventListener('click', () => {
         postFormModal.style.display = 'none';
-        body.style.overflow = ''; // 모달 닫힐 때 body 스크롤 복원
+        body.style.overflow = ''; // 배경 스크롤 복원
     });
 
-    // 모달 외부 클릭 시 닫기
+    // 모달 외부 영역 클릭 시 모달 닫기
     window.addEventListener('click', (event) => {
         if (event.target === postFormModal) {
             postFormModal.style.display = 'none';
-            body.style.overflow = ''; // 모달 외부 클릭 시 닫힐 때도 복원
+            body.style.overflow = ''; // 배경 스크롤 복원
         }
     });
 
-    // 초기 로드 시 renderPosts()를 직접 호출할 필요 없습니다.
-    // Firebase onSnapshot 리스너가 데이터를 불러와 renderPosts를 호출합니다.
-    // renderPosts(); 
+    // 페이지 초기 로드 시 renderPosts()를 직접 호출할 필요 없습니다.
+    // 위에 있는 Firestore onSnapshot 리스너가 초기 데이터를 불러와 자동으로 renderPosts를 호출합니다.
 });
