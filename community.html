@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-KW9HJM9T');</script>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Udemy Guide 커뮤니티: Udemy 강의 & 개발 질문/답변</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://udemyguide.com/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://udemyguide.com/apple-touch-icon.png">
+
+    <meta name="description" content="Udemy 강의 관련 궁금증과 개발 질문을 자유롭게 나누고 해결하는 Udemy Guide 커뮤니티입니다. 익명으로 참여하고 서로의 성장을 도와주세요.">
+    <meta name="keywords" content="Udemy 커뮤니티, 개발 질문, 강의 질문, 익명 게시판, 코딩 커뮤니티, 스택오버플로우, 개발자 포럼, Udemy Guide">
+
+    <meta property="og:title" content="Udemy Guide 커뮤니티: Udemy 강의 & 개발 질문/답변">
+    <meta property="og:description" content="Udemy 강의 관련 궁금증과 개발 질문을 자유롭게 나누고 해결하는 Udemy Guide 커뮤니티입니다.">
+    <meta property="og:image" content="https://udemyguide.com/apple-touch-icon.png">
+    <meta property="og:url" content="https://udemyguide.com/community.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ko_KR">
+    <link rel="canonical" href="https://udemyguide.com/community.html">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="community.css">
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KW9HJM9T"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header>
+        <h1><a href="https://udemyguide.com/" style="color:white;">Udemy Guide</a></h1>
+        <nav>
+            <ul>
+                <li><a href="https://udemyguide.com/#hero">홈</a></li>
+                <li><a href="https://udemyguide.com/#roadmaps">직무별 로드맵</a></li>
+                <li><a href="https://udemyguide.com/notes/#notes">Notes</a></li>
+                <li><a href="https://udemyguide.com/#latest-courses">최신 추천 강의</a></li>
+                <li><a href="https://udemyguide.com/#about">Udemy Guide 소개</a></li>
+                <li style="color:var(--accent-color);"><a href="https://udemyguide.com/community.html">커뮤니티</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="community-main">
+            <h2>커뮤니티</h2>
+            <p class="section-description">강의와 궁금증을 자유롭게 질문하고 답변하며 함께 성장하는 공간입니다!</p>
+
+            <div class="create-post-button-container">
+                <button id="open-post-form-button" class="button">새 질문 작성하기</button>
+            </div>
+
+            <div class="post-list-container">
+                <h3>질문 리스트</h3>
+                <div id="posts-container">
+                    <p class="no-posts-message">아직 질문이 없습니다. 첫 질문을 남겨보세요!</p>
+                </div>
+                <div id="pagination-controls" class="pagination-controls">
+                    </div>
+            </div>
+
+            <div id="post-form-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h3>새 질문 작성하기</h3>
+                    <form id="new-post-form">
+                        <div class="form-group">
+                            <label for="post-nickname">닉네임:</label>
+                            <input type="text" id="post-nickname" required maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="post-password">비밀번호 (수정/삭제 시 필요):</label>
+                            <input type="password" id="post-password" required maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="post-title">제목:</label>
+                            <input type="text" id="post-title" required maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="post-content">내용:</label>
+                            <textarea id="post-content" rows="8" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-image-upload">이미지 첨부 (선택 사항):</label>
+                            <input type="file" id="post-image-upload" accept="image/*">
+                            <img id="post-image-preview" src="#" alt="Image Preview" style="display: none; max-width: 100%; margin-top: 10px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="udemy-course-name">Udemy 강의명 (선택 사항):</label>
+                            <input type="text" id="udemy-course-name" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="udemy-course-url">Udemy 강의 URL (선택 사항):</label>
+                            <input type="url" id="udemy-course-url" placeholder="https://www.udemy.com/course/..." maxlength="200">
+                        </div>
+                        <div class="form-group">
+                            <label for="udemy-course-section">강의 섹션/위치 (예: '섹션 3, 강의 5' 또는 '32분'):</label>
+                            <input type="text" id="udemy-course-section" maxlength="50">
+                        </div>
+                        <button type="submit" class="button">질문 등록</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="password-check-modal" class="modal">
+                <div class="modal-content">
+                    <p>비밀번호를 입력하세요:</p>
+                    <input type="password" id="modal-password" maxlength="20">
+                    <button id="modal-confirm">확인</button>
+                    <button id="modal-cancel" class="cancel">취소</button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Udemy Guide. All rights reserved.</p>
+    </footer>
+
+    <script src="community.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
