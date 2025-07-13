@@ -53,6 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // body 요소 참조 (스크롤 제어용)
     const body = document.body;
 
+    // 햄버거 메뉴 작동
+    const hamburgerButton = document.querySelector('.hamburger-menu-button');
+    const mainNav = document.querySelector('.main-nav');
+    // 메뉴가 열렸을 때 배경을 덮을 오버레이 추가 (JS에서 생성)
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+    document.body.appendChild(overlay);
+    // 햄버거 메뉴 작동
+
+
     const postsPerPage = 10; // 페이지당 게시글 수
     let currentPage = 1; // 현재 페이지 번호 (1부터 시작)
 
@@ -104,6 +114,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         body.style.overflow = 'hidden'; // 모달이 뜨면 배경 스크롤 잠금
         postFormModal.style.display = 'flex'; // 모달 표시
+    }
+
+    // 모바일 내비게이션 토글 함수
+    function toggleMobileNav() {
+        mainNav.classList.toggle('active');
+        overlay.classList.toggle('active');
+        // body 스크롤 제어
+        if (mainNav.classList.contains('active')) {
+            body.style.overflow = 'hidden'; // 메뉴가 열리면 스크롤 잠금
+        } else {
+            body.style.overflow = ''; // 메뉴가 닫히면 스크롤 해제
+        }
     }
 
     // 게시글 렌더링 함수
@@ -633,6 +655,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 페이지 초기 로드 시 renderPosts()를 직접 호출할 필요 없습니다.
-    // 위에 있는 Firestore onSnapshot 리스너가 초기 데이터를 불러와 자동으로 renderPosts를 호출합니다.
+    // 햄버거 버튼 클릭 이벤트
+    hamburgerButton.addEventListener('click', toggleMobileNav);
+
+    // 오버레이 클릭 이벤트 (메뉴 닫기)
+    overlay.addEventListener('click', toggleMobileNav);
+
+    // 내비게이션 메뉴 항목 클릭 시 메뉴 닫기 (anchor 링크에만 적용)
+    // .main-nav 내의 모든 링크에 이벤트 리스너를 추가
+    const navLinks = document.querySelectorAll('.main-nav a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            // 외부 링크나 다른 HTML 페이지로 이동하는 링크는 제외 (새로고침되므로)
+            // 현재 페이지 내의 섹션으로 이동하는 (hash 링크) 경우에만 메뉴 닫기
+            // community 페이지에서는 모든 메뉴가 다른 페이지로 이동하므로,
+            // 이 페이지에서는 단순히 클릭 시 메뉴를 닫도록 합니다.
+            toggleMobileNav();
+        });
+    });
+
+
+    // 페이지 초기 로드 시 renderPosts()를 직접 호출할 필요 X
+    // 위에 있는 Firestore onSnapshot 리스너가 초기 데이터를 불러와 자동으로 renderPosts를 호출
 });
