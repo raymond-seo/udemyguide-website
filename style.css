@@ -40,93 +40,162 @@ a:hover {
 header {
     background: var(--background-dark);
     color: #fff;
-    padding: 0.8rem 20px; /* 상하 패딩을 줄여 높이 감소, 좌우 패딩 추가 */
-    /* text-align: center; 제거 - flexbox로 정렬 */
+    padding: 0.8rem 20px;
     box-shadow: 0 4px 15px var(--shadow-medium);
     position: sticky;
     top: 0;
     z-index: 1000;
 
-    display: flex; /* flexbox 사용 */
-    justify-content: space-between; /* 양 끝 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
-    flex-wrap: wrap; /* 작은 화면에서 요소들이 줄바꿈되도록 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* flex-wrap: wrap; 제거 (모바일에서 nav를 숨길 것이므로 필요 없음) */
 }
 
 header h1 {
     margin: 0;
-    font-size: 2.2rem; /* 글자 크기 약간 줄여서 공간 확보 */
+    font-size: 2.2rem;
     letter-spacing: 1px;
     font-weight: 700;
     color: #fff;
-    /* text-align: left; 필요 없음, flexbox가 처리 */
 }
 
-nav {
-    margin-top: 0; /* h1과 nav가 flex item이 되므로 margin-top 제거 */
+/* 햄버거 메뉴 버튼 (기본적으로 숨김 - PC 버전) */
+.hamburger-menu-button {
+    display: none; /* PC에서는 숨김 */
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    z-index: 1001; /* 메뉴보다 위에 오도록 */
 }
 
-nav ul {
+/* 메인 내비게이션 (PC 기본 스타일) */
+.main-nav {
+    margin-top: 0;
+}
+
+.main-nav ul {
     padding: 0;
     list-style: none;
-    margin: 0; /* 기존 margin-top: 20px; 제거 */
-    display: flex;
-    justify-content: flex-end; /* 오른쪽 끝으로 정렬 */
-    gap: 20px; /* 항목 간 간격 약간 줄임 */
-    flex-wrap: wrap; /* 작은 화면에서 항목들이 줄바꿈되도록 */
+    margin: 0;
+    display: flex; /* PC에서는 가로 정렬 */
+    justify-content: flex-end;
+    gap: 20px;
+    /* flex-wrap: wrap; 제거 (PC에서 줄바꿈 없음) */
 }
 
-nav ul li a {
+.main-nav ul li a {
     color: #fff;
     font-weight: 500;
-    font-size: 1rem; /* 글자 크기 약간 줄임 */
-    padding: 6px 12px; /* 패딩을 줄여 링크 크기 감소 */
+    font-size: 1rem;
+    padding: 6px 12px;
     border-radius: 5px;
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-nav ul li a:hover {
+.main-nav ul li a:hover {
     background: var(--primary-color);
     color: #fff;
 }
 
+
 /* --- 반응형 디자인 수정 (768px 이하) --- */
 @media (max-width: 768px) {
     header {
-        flex-direction: column; /* h1과 nav가 세로로 쌓이도록 변경 */
-        align-items: flex-start; /* 왼쪽 정렬 */
-        padding: 0.8rem 15px; /* 작은 화면 패딩 조정 */
+        /* flex-direction: column; 제거 (아래서 다시 설정) */
+        align-items: center; /* 로고와 햄버거 버튼이 중앙에 오도록 */
+        justify-content: space-between; /* 로고는 왼쪽, 햄버거는 오른쪽 */
+        padding: 0.8rem 15px;
+        height: 60px; /* 헤더 높이 고정 */
     }
 
     header h1 {
-        width: 100%; /* h1이 한 줄을 다 차지하도록 */
-        text-align: center; /* 중앙 정렬로 다시 변경 (필요시) */
-        margin-bottom: 10px; /* h1과 nav 사이 간격 */
-        font-size: 2rem; /* 글자 크기 다시 조정 */
+        /* width: 100%; 제거 */
+        text-align: left; /* 왼쪽 정렬 */
+        margin-bottom: 0; /* 불필요한 마진 제거 */
+        font-size: 2rem;
+        flex-grow: 1; /* 로고가 남은 공간을 차지하도록 */
+        padding-left: 10px;
     }
 
-    nav {
-        width: 100%; /* nav도 한 줄 다 차지 */
-        margin-top: 10px; /* h1과 nav 사이 간격 */
+    /* 모바일에서 햄버거 메뉴 버튼 보이기 */
+    .hamburger-menu-button {
+        display: block; /* 모바일에서 보임 */
     }
 
-    nav ul {
+    /* 모바일 내비게이션 오버레이 및 메뉴 컨테이너 */
+    .main-nav {
+        position: fixed; /* 고정 위치 */
+        top: 0;
+        left: -100%; /* 초기에는 왼쪽 화면 밖으로 숨김 */
+        width: 70%; /* 메뉴의 너비 */
+        max-width: 300px; /* 메뉴의 최대 너비 */
+        height: 100%; /* 전체 높이 */
+        background: var(--background-dark); /* 헤더와 동일한 배경색 */
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        transition: left 0.3s ease-out; /* 슬라이드 애니메이션 */
+        z-index: 999; /* 헤더보다는 낮게, 오버레이보다는 높게 */
+        overflow-y: auto; /* 메뉴 내용이 길어지면 스크롤 가능 */
+        padding-top: 20px; /* 상단 여백 */
+    }
+
+    /* 메뉴가 활성화되었을 때 */
+    .main-nav.active {
+        left: 0; /* 화면 안으로 슬라이드 인 */
+    }
+
+    .main-nav ul {
         flex-direction: column; /* 메뉴 항목 세로로 쌓이도록 */
-        gap: 10px; /* 항목 간 간격 */
-        align-items: center; /* 메뉴 항목 중앙 정렬 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+        padding: 20px; /* 메뉴 내부 패딩 */
+        gap: 15px; /* 항목 간 간격 */
+        width: 100%; /* ul이 nav의 100%를 차지하도록 */
     }
 
-    nav ul li a {
-        font-size: 0.95rem; /* 글자 크기 더 줄임 */
-        padding: 5px 10px; /* 패딩 더 줄임 */
+    .main-nav ul li a {
+        font-size: 1.1rem; /* 메뉴 항목 글자 크기 키움 */
+        padding: 10px 0; /* 패딩 조정 */
+        width: 100%; /* 링크가 전체 너비를 차지하도록 */
+        text-align: left; /* 텍스트 왼쪽 정렬 */
+        border-radius: 0; /* 테두리 둥글기 제거 */
+    }
+
+    .main-nav ul li a:hover {
+        background: none; /* 배경 효과 제거 */
+        color: var(--accent-color); /* 호버 시 색상 변경 */
+    }
+
+    /* 메뉴가 열렸을 때 배경을 덮는 오버레이 */
+    .overlay {
+        display: none; /* 기본 숨김 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정색 */
+        z-index: 998; /* 메뉴 뒤에 위치 */
+    }
+    .overlay.active {
+        display: block; /* 활성화되면 보임 */
     }
 }
 
 @media (max-width: 480px) {
     header h1 {
-        font-size: 1.6rem;
+        font-size: 1.6rem; /* 작은 모바일에서 제목 크기 더 줄임 */
+        padding-left: 10px;
     }
-    nav ul li a {
+    .hamburger-menu-button {
+        font-size: 1.8rem;
+    }    
+    .main-nav {
+        width: 80%; /* 더 작은 모바일에서 메뉴 너비 조정 */
+    }
+    .main-nav ul li a {
         font-size: 0.9rem;
     }
 }

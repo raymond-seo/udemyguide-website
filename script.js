@@ -17,6 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // filterButtons는 HTML에서 'category-filter' div 안에 있는 버튼들을 선택합니다.
     const filterButtons = document.querySelectorAll('.filter-button'); 
 
+    // 햄버거 메뉴 기능 추가
+    const hamburgerButton = document.querySelector('.hamburger-menu-button');
+    const mainNav = document.querySelector('.main-nav');
+    const body = document.body; // body 요소는 이미 있지만, 혹시 모르니 다시 명시합니다.
+
+    // 메뉴가 열렸을 때 배경을 덮을 오버레이 추가 (JS에서 생성)
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+    document.body.appendChild(overlay); // body에 오버레이 추가
+    // 햄버거 메뉴 기능 추가
+
     // =======================================================
     // 2. 데이터 정의 (모든 데이터는 DOMContentLoaded 내부에서 정의)
     // =======================================================
@@ -600,6 +611,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 모바일 내비게이션 토글 함수
+    function toggleMobileNav() {
+        mainNav.classList.toggle('active');
+        overlay.classList.toggle('active');
+        // body 스크롤 제어
+        if (mainNav.classList.contains('active')) {
+            body.style.overflow = 'hidden'; // 메뉴가 열리면 스크롤 잠금
+        } else {
+            body.style.overflow = ''; // 메뉴가 닫히면 스크롤 해제
+        }
+    }
+
     // 로드맵 카테고리 목록 표시 함수
     function displayRoadmapCategories() {
         roadmapCategoryListDiv.innerHTML = ''; // 기존 내용 지우기
@@ -776,6 +799,25 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => {
             const category = button.dataset.category;
             filterNotesByCategory(category);
+        });
+    });
+
+    // 햄버거 버튼 클릭 이벤트
+    hamburgerButton.addEventListener('click', toggleMobileNav);
+
+    // 오버레이 클릭 이벤트 (메뉴 닫기)
+    overlay.addEventListener('click', toggleMobileNav);
+
+    // 메뉴 항목 클릭 시 메뉴 닫기 (메뉴 내부의 각 링크에 이벤트 리스너 추가)
+    // .main-nav 내의 모든 링크에 이벤트 리스너를 추가합니다.
+    const navLinks = document.querySelectorAll('.main-nav a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // anchor 링크 클릭 시 메뉴 닫기 (예: #hero, #roadmaps 등)
+            // community 페이지로 이동하는 링크는 새로고침되므로 닫을 필요 없음
+            if (link.hash) { // 링크가 #으로 시작하는 anchor 링크인 경우
+                toggleMobileNav();
+            }
         });
     });
 
