@@ -652,21 +652,21 @@ footer {
     }
 
     #hero {
-        padding: 70px 20px;
+        padding: 35px 20px;
     }
 
     #hero h2 {
-        font-size: 2.8rem;
+        font-size: 1.4rem;
     }
 
     #hero p {
-        font-size: 1.2rem;
-        margin-bottom: 30px;
+        font-size: 0.6rem;
+        margin-bottom: 15px;
     }
 
     .button {
         padding: 15px 30px;
-        font-size: 1.1rem;
+        font-size: 0.5rem;
     }
 
     .course-list, .roadmap-category-list {
@@ -762,20 +762,20 @@ footer {
     }
 
     #hero {
-        padding: 50px 15px;
+        padding: 25px 15px;
     }
 
     #hero h2 {
-        font-size: 2.2rem;
+        font-size: 1.1rem;
     }
 
     #hero p {
-        font-size: 1rem;
+        font-size: 0.5rem;
     }
 
     .button {
-        padding: 10px 20px;
-        font-size: 0.95rem;
+        padding: 5px 20px;
+        font-size: 0.45rem;
     }
 
     .course-card, .roadmap-card {
