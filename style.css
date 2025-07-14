@@ -45,9 +45,11 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* flex-wrap: wrap; 제거 (모바일에서 nav를 숨길 것이므로 필요 없음) */
 }
 
 header h1 {
@@ -82,6 +84,7 @@ header h1 {
     display: flex; /* PC에서는 가로 정렬 */
     justify-content: flex-end;
     gap: 20px;
+    /* flex-wrap: wrap; 제거 (PC에서 줄바꿈 없음) */
 }
 
 .main-nav ul li a {
@@ -98,6 +101,104 @@ header h1 {
     color: #fff;
 }
 
+
+/* --- 반응형 디자인 수정 (768px 이하) --- */
+@media (max-width: 768px) {
+    header {
+        /* flex-direction: column; 제거 (아래서 다시 설정) */
+        align-items: center; /* 로고와 햄버거 버튼이 중앙에 오도록 */
+        justify-content: space-between; /* 로고는 왼쪽, 햄버거는 오른쪽 */
+        padding: 0.8rem 15px;
+        height: 60px; /* 헤더 높이 고정 */
+    }
+
+    header h1 {
+        /* width: 100%; 제거 */
+        text-align: left; /* 왼쪽 정렬 */
+        margin-bottom: 0; /* 불필요한 마진 제거 */
+        font-size: 2rem;
+        flex-grow: 1; /* 로고가 남은 공간을 차지하도록 */
+        padding-left: 10px;
+    }
+
+    /* 모바일에서 햄버거 메뉴 버튼 보이기 */
+    .hamburger-menu-button {
+        display: block; /* 모바일에서 보임 */
+    }
+
+    /* 모바일 내비게이션 오버레이 및 메뉴 컨테이너 */
+    .main-nav {
+        position: fixed; /* 고정 위치 */
+        top: 0;
+        left: -100%; /* 초기에는 왼쪽 화면 밖으로 숨김 */
+        width: 70%; /* 메뉴의 너비 */
+        max-width: 300px; /* 메뉴의 최대 너비 */
+        height: 100%; /* 전체 높이 */
+        background: var(--background-dark); /* 헤더와 동일한 배경색 */
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        transition: left 0.3s ease-out; /* 슬라이드 애니메이션 */
+        z-index: 999; /* 헤더보다는 낮게, 오버레이보다는 높게 */
+        overflow-y: auto; /* 메뉴 내용이 길어지면 스크롤 가능 */
+        padding-top: 20px; /* 상단 여백 */
+    }
+
+    /* 메뉴가 활성화되었을 때 */
+    .main-nav.active {
+        left: 0; /* 화면 안으로 슬라이드 인 */
+    }
+
+    .main-nav ul {
+        flex-direction: column; /* 메뉴 항목 세로로 쌓이도록 */
+        align-items: flex-start; /* 왼쪽 정렬 */
+        padding: 20px; /* 메뉴 내부 패딩 */
+        gap: 15px; /* 항목 간 간격 */
+        width: 100%; /* ul이 nav의 100%를 차지하도록 */
+    }
+
+    .main-nav ul li a {
+        font-size: 1.1rem; /* 메뉴 항목 글자 크기 키움 */
+        padding: 10px 0; /* 패딩 조정 */
+        width: 100%; /* 링크가 전체 너비를 차지하도록 */
+        text-align: left; /* 텍스트 왼쪽 정렬 */
+        border-radius: 0; /* 테두리 둥글기 제거 */
+    }
+
+    .main-nav ul li a:hover {
+        background: none; /* 배경 효과 제거 */
+        color: var(--accent-color); /* 호버 시 색상 변경 */
+    }
+
+    /* 메뉴가 열렸을 때 배경을 덮는 오버레이 */
+    .overlay {
+        display: none; /* 기본 숨김 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정색 */
+        z-index: 998; /* 메뉴 뒤에 위치 */
+    }
+    .overlay.active {
+        display: block; /* 활성화되면 보임 */
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.6rem; /* 작은 모바일에서 제목 크기 더 줄임 */
+        padding-left: 10px;
+    }
+    .hamburger-menu-button {
+        font-size: 1.8rem;
+    }    
+    .main-nav {
+        width: 80%; /* 더 작은 모바일에서 메뉴 너비 조정 */
+    }
+    .main-nav ul li a {
+        font-size: 0.9rem;
+    }
+}
 /* --- 메인 콘텐츠 영역 --- */
 main {
     padding: 40px 30px;
@@ -111,7 +212,12 @@ section {
     margin-bottom: 40px;
     border-radius: 15px;
     box-shadow: 0 8px 25px var(--shadow-light);
+    /* transition: transform 0.3s ease; */
 }
+
+/* section:hover {
+    /* transform: translateY(-5px); */
+ */
 
 section h2 {
     font-size: 2.8rem;
@@ -122,8 +228,11 @@ section h2 {
     font-weight: 700;
 }
 
-/* 모든 섹션 H2 제목의 밑줄 (히어로 섹션 제외 - 아래에서 오버라이드) */
-section h2::after {
+#roadmaps h2::after, /* 직무별 로드맵 섹션 제목 */
+#latest-courses h2::after, /* 최신 추천 강의 섹션 제목 */
+#notes h2::after, /* Notes 섹션 제목 */
+#about h2::after, /* About 섹션 제목 */
+#community-main h2::after { /* 커뮤니티 섹션 제목 (community.html용) */
     content: '';
     position: absolute;
     bottom: -15px;
@@ -156,7 +265,7 @@ section h2::after {
 }
 
 #hero h2::after {
-    background: #fff; /* 히어로 섹션 제목 밑줄은 흰색 (다른 섹션과 다름) */
+    background: #fff; /* 히어로 섹션 제목 밑줄은 흰색 */
 }
 
 #hero p {
@@ -365,6 +474,7 @@ section h2::after {
     padding-right: 10px; /* 아이콘과 텍스트 간격 */
 }
 
+
 .roadmap-section h4 {
     font-size: 2rem;
     color: var(--text-color);
@@ -498,7 +608,6 @@ footer {
 
 
 /* --- 반응형 디자인 --- */
-/* (1024px 이하) */
 @media (max-width: 1024px) {
     main {
         padding: 30px 20px;
@@ -517,83 +626,20 @@ footer {
     }
 }
 
-/* (768px 이하) */
 @media (max-width: 768px) {
-    header {
-        align-items: center; /* 로고와 햄버거 버튼이 중앙에 오도록 */
-        justify-content: space-between; /* 로고는 왼쪽, 햄버거는 오른쪽 */
-        padding: 0.8rem 15px;
-        height: 60px; /* 헤더 높이 고정 */
-    }
-
     header h1 {
-        text-align: left; /* 왼쪽 정렬 */
-        margin-bottom: 0; /* 불필요한 마진 제거 */
-        font-size: 2rem;
-        flex-grow: 1; /* 로고가 남은 공간을 차지하도록 */
-        padding-left: 10px;
+        font-size: 1.5rem;
     }
 
-    /* 모바일에서 햄버거 메뉴 버튼 보이기 */
-    .hamburger-menu-button {
-        display: block; /* 모바일에서 보임 */
+    nav ul {
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
     }
 
-    /* 모바일 내비게이션 오버레이 및 메뉴 컨테이너 */
-    .main-nav {
-        position: fixed; /* 고정 위치 */
-        top: 0;
-        left: -100%; /* 초기에는 왼쪽 화면 밖으로 숨김 */
-        width: 70%; /* 메뉴의 너비 */
-        max-width: 300px; /* 메뉴의 최대 너비 */
-        height: 100%; /* 전체 높이 */
-        background: var(--background-dark); /* 헤더와 동일한 배경색 */
-        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-        transition: left 0.3s ease-out; /* 슬라이드 애니메이션 */
-        z-index: 999; /* 헤더보다는 낮게, 오버레이보다는 높게 */
-        overflow-y: auto; /* 메뉴 내용이 길어지면 스크롤 가능 */
-        padding-top: 20px; /* 상단 여백 */
-    }
-
-    /* 메뉴가 활성화되었을 때 */
-    .main-nav.active {
-        left: 0; /* 화면 안으로 슬라이드 인 */
-    }
-
-    .main-nav ul {
-        flex-direction: column; /* 메뉴 항목 세로로 쌓이도록 */
-        align-items: flex-start; /* 왼쪽 정렬 */
-        padding: 20px; /* 메뉴 내부 패딩 */
-        gap: 15px; /* 항목 간 간격 */
-        width: 100%; /* ul이 nav의 100%를 차지하도록 */
-    }
-
-    .main-nav ul li a {
-        font-size: 1.1rem; /* 메뉴 항목 글자 크기 키움 */
-        padding: 10px 0; /* 패딩 조정 */
-        width: 100%; /* 링크가 전체 너비를 차지하도록 */
-        text-align: left; /* 텍스트 왼쪽 정렬 */
-        border-radius: 0; /* 테두리 둥글기 제거 */
-    }
-
-    .main-nav ul li a:hover {
-        background: none; /* 배경 효과 제거 */
-        color: var(--accent-color); /* 호버 시 색상 변경 */
-    }
-
-    /* 메뉴가 열렸을 때 배경을 덮는 오버레이 */
-    .overlay {
-        display: none; /* 기본 숨김 */
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정색 */
-        z-index: 998; /* 메뉴 뒤에 위치 */
-    }
-    .overlay.active {
-        display: block; /* 활성화되면 보임 */
+    nav ul li a {
+        font-size: 1rem;
+        padding: 6px 12px;
     }
 
     main {
@@ -610,27 +656,26 @@ footer {
     }
 
     #hero {
-        padding: 35px 20px; /* 히어로 섹션 높이 조정 */
+        padding: 35px 20px;
     }
 
     #hero h2 {
-        font-size: 1.4rem; /* 히어로 제목 크기 조정 */
+        font-size: 1.4rem;
     }
 
     #hero p {
-        font-size: 0.6rem; /* 히어로 문단 크기 조정 */
+        font-size: 0.6rem;
         margin-bottom: 15px;
     }
 
     .button {
         padding: 15px 30px;
-        font-size: 0.5rem; /* 버튼 텍스트 크기 조정 */
+        font-size: 0.5rem;
     }
 
     .course-list, .roadmap-category-list {
-        grid-template-columns: repeat(2, 1fr); /* 로드맵 2열 배치 */
-        gap: 20px; /* 로드맵/강의 카드 간격 */
-        margin-top: 25px; /* 로드맵/강의 목록 상단 여백 조정 */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
     }
 
     .course-card h3 {
@@ -638,20 +683,8 @@ footer {
         min-height: auto;
     }
 
-    /* 로드맵 카드 내부 요소 조정 */
     .roadmap-card h3 {
-        font-size: 1.4rem; /* 모바일 2열에 맞게 제목 크기 조정 */
-        margin: 0 10px 10px 10px; /* 패딩 조정 */
-    }
-
-    .roadmap-card p {
-        font-size: 0.9rem; /* 모바일 2열에 맞게 설명 텍스트 크기 조정 */
-        padding: 0 10px; /* 패딩 조정 */
-    }
-
-    .roadmap-card img {
-        height: 120px; /* 모바일 2열에 맞게 이미지 높이 조정 */
-        margin-bottom: 15px;
+        font-size: 1.6rem;
     }
 
     #roadmap-detail {
@@ -706,53 +739,14 @@ footer {
     #about p {
         font-size: 1rem;
     }
-
-    #notes .section-description {
-        font-size: 1rem;
-        margin-bottom: 30px;
-    }
-
-    .note-card img {
-        height: 160px;
-    }
-
-    .note-card h3 {
-        font-size: 1.4rem;
-        min-height: auto;
-    }
-
-    .note-card-content {
-        padding: 20px;
-    }
-
-    .category-filter {
-        gap: 8px;
-    }
-
-    .filter-button {
-        padding: 8px 15px;
-        font-size: 0.85rem;
-    }
 }
 
-/* (480px 이하) */
 @media (max-width: 480px) {
     header {
         padding: 1rem 0;
     }
     header h1 {
         font-size: 1.0rem;
-    }
-
-    .hamburger-menu-button {
-        font-size: 1.8rem;
-    }
-    
-    .main-nav {
-        width: 80%; /* 더 작은 모바일에서 메뉴 너비 조정 */
-    }
-    .main-nav ul li a {
-        font-size: 0.9rem;
     }
 
     nav ul li {
@@ -772,27 +766,22 @@ footer {
     }
 
     #hero {
-        padding: 25px 15px; /* 히어로 섹션 높이 더 조정 */
+        padding: 25px 15px;
     }
 
     #hero h2 {
-        font-size: 1.1rem; /* 히어로 제목 크기 더 조정 */
+        font-size: 1.1rem;
     }
 
     #hero p {
-        font-size: 0.5rem; /* 히어로 문단 크기 더 조정 */
+        font-size: 0.5rem;
     }
 
     .button {
         padding: 5px 20px;
-        font-size: 0.45rem; /* 버튼 텍스트 크기 더 조정 */
+        font-size: 0.45rem;
     }
 
-    .course-list, .roadmap-category-list {
-        grid-template-columns: repeat(2, 1fr); /* 480px 이하에서도 2열 유지 */
-        gap: 15px; /* 더 좁은 화면에서 간격 더 줄임 */
-    }
-    
     .course-card, .roadmap-card {
         padding: 15px;
         margin-bottom: 20px;
@@ -801,20 +790,6 @@ footer {
     .course-card h3, .roadmap-card h3 {
         font-size: 1.1rem;
     }
-    
-    /* 로드맵 카드 내부 요소 조정 (480px용) */
-    .roadmap-card h3 {
-        font-size: 1.1rem; /* 480px 이하에서 제목 크기 더 줄임 */
-    }
-
-    .roadmap-card p {
-        font-size: 0.8rem; /* 480px 이하에서 설명 텍스트 크기 더 줄임 */
-    }
-
-    .roadmap-card img {
-        height: 100px; /* 480px 이하에서 이미지 높이 더 줄임 */
-    }
-
 
     #roadmap-detail {
         padding: 20px;
@@ -849,7 +824,120 @@ footer {
         padding: 10px 20px;
         font-size: 0.95rem;
     }
+}
 
+/* --- Notes 섹션 --- */
+#notes .section-description {
+    font-size: 1.15rem;
+    color: var(--light-text-color);
+    text-align: center;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 35px;
+    margin-top: 35px;
+}
+
+.note-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px var(--shadow-medium);
+}
+
+.note-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    border-radius: 10px 10px 0 0; /* 상단만 둥글게 */
+}
+
+.note-card-content {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-card h3 {
+    font-size: 1.6rem;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    min-height: 60px;
+    font-weight: 600;
+}
+
+.note-card p {
+    font-size: 1rem;
+    color: var(--light-text-color);
+    margin-bottom: 12px;
+    flex-grow: 1; /* 내용이 길어져도 카드 높이 일정하게 유지 */
+}
+
+.note-card .meta {
+    font-size: 0.9rem;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.note-card .read-more {
+    display: inline-block;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.3s ease;
+    margin-top: auto; /* 하단 정렬 */
+}
+
+.note-card .read-more:hover {
+    background: #00A9B0;
+    transform: translateY(-2px);
+}
+
+/* --- 반응형 추가 --- */
+@media (max-width: 768px) {
+    #notes .section-description {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    .note-card img {
+        height: 160px;
+    }
+
+    .note-card h3 {
+        font-size: 1.4rem;
+        min-height: auto;
+    }
+
+    .note-card-content {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
     .note-card img {
         height: 140px;
     }
@@ -861,29 +949,98 @@ footer {
     .note-card p {
         font-size: 0.9rem;
     }
+}
 
+/* notes-controls (카테고리 필터, 검색 등) */
+.notes-controls {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.category-filter {
+    display: flex;
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-button {
+    background: #eef2f9; /* 배경색 */
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.filter-button:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.filter-button.active {
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+}
+
+/* "더 보기" 버튼 컨테이너 */
+.load-more-container {
+    text-align: center; /* 여전히 안전을 위해 유지합니다. */
+    margin-top: 40px;
+}
+
+/* 기존 .button 스타일을 따름 */
+.load-more-container .button {
+    /* 기존 스타일 그대로 유지 (padding, font-size, background, color, border 등) */
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    background: var(--accent-color);
+    color: var(--background-dark);
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 196, 204, 0.4);
+
+    /* --- 이 부분을 추가/수정하여 중앙 정렬을 강제합니다 --- */
+    display: block; /* 버튼을 블록 레벨 요소로 만듭니다. */
+    width: fit-content; /* 버튼의 너비를 내용에 맞게 조절합니다. */
+    margin: 0 auto; /* 상하 여백은 0, 좌우 여백은 자동으로 설정하여 중앙 정렬합니다. */
+}
+
+.load-more-container .button:hover {
+    background: #00A9B0;
+    transform: translateY(-5px); /* 이전 translateY(-2px)에서 -5px로 변경되어 더 눈에 띄게 했습니다. */
+    box-shadow: 0 8px 20px rgba(0, 196, 204, 0.6);
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .category-filter {
+        gap: 8px;
+    }
+    .filter-button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+}
+@media (max-width: 480px) {
     .category-filter {
         justify-content: flex-start; /* 모바일에서 왼쪽 정렬 */
         overflow-x: auto; /* 가로 스크롤 가능하게 */
         white-space: nowrap; /* 버튼들이 한 줄에 있도록 */
         padding-bottom: 10px; /* 스크롤바 때문에 여백 */
     }
-
     .filter-button {
         flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
-    }
-}
-
-/* "더 보기" 버튼 컨테이너 (반응형 조정) */
-@media (max-width: 768px) {
-    .load-more-container .button {
-        padding: 15px 30px;
-        font-size: 1.1rem;
-    }
-}
-@media (max-width: 480px) {
-    .load-more-container .button {
-        padding: 10px 20px;
-        font-size: 0.95rem;
     }
 }
