@@ -3,7 +3,7 @@ const path = require('path'); // 경로 모듈을 불러옵니다. 파일 경로
 
 const domain = 'https://udemyguide.com'; // 
 const notesDirPath = path.join(__dirname, 'notes'); // 'notes' 폴더의 절대 경로를 설정합니다.
-const sitemapPath = path.join(__dirname, 'sitemap.xml'); // sitemap.xml 파일이 생성될 경로 (프로젝트 루트)를 설정합니다.
+const sitemapPath = path.join(__dirname, 'dist', 'sitemap.xml');  // sitemap.xml 파일이 생성될 경로 (프로젝트 루트)를 설정합니다.
 
 // 현재 날짜를 YYYY-MM-DD 형식으로 가져오는 함수
 // (sitemap.xml에 <lastmod> 태그에 사용됩니다.)
@@ -56,14 +56,17 @@ const generateSitemap = () => {
 
         sitemapContent += `</urlset>`; // sitemap.xml 파일의 끝 태그
 
-        // 완성된 sitemapContent를 sitemap.xml 파일로 저장합니다.
+         // ★★★ dist 폴더가 존재하지 않으면 생성합니다. ★★★
+        const distDirPath = path.join(__dirname, 'dist');
+        if (!fs.existsSync(distDirPath)) {
+            fs.mkdirSync(distDirPath);
+        }
+
         fs.writeFile(sitemapPath, sitemapContent, (err) => {
             if (err) {
-                // 파일 저장 중 오류가 발생하면 메시지를 출력합니다.
                 console.error('sitemap.xml 파일 생성 중 오류 발생:', err);
             } else {
-                // 성공적으로 파일이 업데이트되었음을 알리는 메시지를 출력합니다.
-                console.log('sitemap.xml 파일이 성공적으로 업데이트되었습니다.');
+                console.log('sitemap.xml 파일이 성공적으로 업데이트되었습니다. (경로: dist/sitemap.xml)');
             }
         });
     });
