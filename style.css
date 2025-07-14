@@ -228,11 +228,9 @@ section h2 {
     font-weight: 700;
 }
 
-#roadmaps h2::after, /* 직무별 로드맵 섹션 제목 */
-#latest-courses h2::after, /* 최신 추천 강의 섹션 제목 */
-#notes h2::after, /* Notes 섹션 제목 */
-#about h2::after, /* About 섹션 제목 */
-#community-main h2::after { /* 커뮤니티 섹션 제목 (community.html용) */
+
+/* 모든 섹션 H2 제목의 밑줄 (히어로 섹션 제외 - 아래에서 오버라이드) */
+section h2::after {
     content: '';
     position: absolute;
     bottom: -15px;
@@ -746,7 +744,7 @@ footer {
         padding: 1rem 0;
     }
     header h1 {
-        font-size: 1.0rem;
+        font-size: 1.3rem;
     }
 
     nav ul li {
@@ -762,7 +760,7 @@ footer {
     }
 
     section h2 {
-        font-size: 1.8rem;
+        font-size: 1.3rem;
     }
 
     #hero {
@@ -774,7 +772,7 @@ footer {
     }
 
     #hero p {
-        font-size: 0.5rem;
+        font-size: 0.6rem;
     }
 
     .button {
