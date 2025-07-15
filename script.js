@@ -543,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 11,
             title: "모던 웹 애니메이션 기술 총정리",
             description: "웹사이트에 생동감을 불어넣는 최신 애니메이션 기술들을 파헤쳐봅니다.",
-            image: "https://images.unsplash.com/photo-1555099962-4168e325c5d0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            image: "https://images.unsplash.com/photo-1652554665015-98e2c8eab3e9?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             date: "2025.05.20",
             category: "개발 팁",
             link: "notes/web-animation-techniques"
