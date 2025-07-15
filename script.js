@@ -613,13 +613,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 모바일 내비게이션 토글 함수
     function toggleMobileNav() {
+        // 1. active 클래스를 토글하여 메뉴의 가시성 상태를 변경합니다.
         mainNav.classList.toggle('active');
         overlay.classList.toggle('active');
-        // body 스크롤 제어
-        if (mainNav.classList.contains('active')) {
-            body.style.overflow = 'hidden'; // 메뉴가 열리면 스크롤 잠금
-        } else {
-            body.style.overflow = ''; // 메뉴가 닫히면 스크롤 해제
+
+        // 2. 토글된 이후의 현재 상태를 확인하여 body의 overflow를 정확히 제어합니다.
+        //    mainNav.classList.contains('active')는 이제 토글된 '후'의 상태를 반영합니다.
+        if (mainNav.classList.contains('active')) { // 이제 메뉴가 '열린' 상태라면
+            body.style.overflow = 'hidden'; // 스크롤 잠금
+        } else { // 이제 메뉴가 '닫힌' 상태라면
+            body.style.overflow = ''; // 스크롤 해제
         }
     }
 
@@ -816,7 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // anchor 링크 클릭 시 메뉴 닫기 (예: #hero, #roadmaps 등)
             // community 페이지로 이동하는 링크는 새로고침되므로 닫을 필요 없음
             if (link.hash) { // 링크가 #으로 시작하는 anchor 링크인 경우
-                toggleMobileNav();
+                // ✅ 추가: 현재 화면 너비가 모바일 기준(768px 이하)일 때만 toggleMobileNav() 호출
+                //    CSS의 @media (max-width: 768px)에 맞추어 768px을 기준으로 합니다.
+                if (window.innerWidth <= 768) { 
+                    toggleMobileNav();
+                }
             }
         });
     });
