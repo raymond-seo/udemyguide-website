@@ -25,6 +25,7 @@ export default defineConfig({
         'notes-rest-api-best-practices': './notes/rest-api-best-practices.html',
         'notes-why-nodejs': './notes/why-nodejs.html',
         'notes-why-typescript': './notes/why-typescript.html',
+        'notes-web-animation-techniques': './notes/web-animation-techniques.html',
       },
     },
   },
