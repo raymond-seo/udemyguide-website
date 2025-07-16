@@ -26,6 +26,7 @@ export default defineConfig({
         'notes-why-nodejs': './notes/why-nodejs.html',
         'notes-why-typescript': './notes/why-typescript.html',
         'notes-web-animation-techniques': './notes/web-animation-techniques.html',
+        'notes-cloud-computing-for-devs': './notes/cloud-computing-for-devs.html',
       },
     },
   },
